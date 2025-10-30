@@ -1,95 +1,81 @@
-import React, { useState } from 'react';
-import { FaFacebookF, FaPinterestP, FaLinkedinIn, FaTelegramPlane } from 'react-icons/fa';
-import { TiSocialTwitter } from 'react-icons/ti';
-import { MdClose } from 'react-icons/md';
+import React, { useState } from "react";
+import { MdClose } from "react-icons/md";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const ProductModal = ({ product, onClose }) => {
-  const [quantity, setQuantity] = useState(1);
-
-  if (!product) return null;
-
-  const increment = () => setQuantity((q) => q + 1);
-  const decrement = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
+  const [activeImage, setActiveImage] = useState(product.images[0]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-4xl w-full relative flex flex-col md:flex-row p-6 gap-6">
-        {/* Close button */}
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-center items-center p-4">
+      <div className="bg-white rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl animate-[fadeIn_.25s_ease] flex flex-col md:flex-row relative">
+
+        {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+          className="absolute top-4 right-4 text-gray-500 hover:text-black transition"
         >
-          <MdClose size={24} />
+          <MdClose size={26} />
         </button>
 
-        {/* Left - Image */}
-        <div className="flex-shrink-0 w-full md:w-1/2 flex justify-center items-center">
-          <img src={product.image} alt={product.title} className="max-h-80 object-contain" />
-        </div>
+        {/* Left : Image + Thumbnails */}
+        <div className="w-full md:w-1/2 p-6 border-b md:border-b-0 md:border-r border-gray-200 flex flex-col items-center gap-4">
 
-        {/* Right - Info */}
-        <div className="flex flex-col flex-grow">
-          <h2 className="text-2xl font-semibold mb-2">{product.title}</h2>
-          <div className="mb-4">
-            <img src={product.brandIcon} alt="Brand" className="w-6 h-6" />
-          </div>
-
-          <div className="text-blue-600 text-xl font-bold mb-4">${product.price.toFixed(2)}</div>
-
-          <p className="text-gray-600 mb-4">{product.description}</p>
-
-          <div className="mb-4 font-semibold">
-            <span className="text-green-600">✓ {product.stock} in stock</span>
-          </div>
-
-          <div className="flex items-center gap-2 mb-6">
-            <button
-              onClick={decrement}
-              className="border border-gray-400 px-3 py-1 rounded text-lg font-bold hover:bg-gray-200"
-            >
-              -
-            </button>
-            <input
-              type="text"
-              readOnly
-              value={quantity}
-              className="w-12 text-center border border-gray-300 rounded"
+          <Zoom>
+            <img
+              src={activeImage}
+              alt="Product"
+              className="max-h-[360px] object-contain"
             />
-            <button
-              onClick={increment}
-              className="border border-gray-400 px-3 py-1 rounded text-lg font-bold hover:bg-gray-200"
-            >
-              +
-            </button>
-          </div>
+          </Zoom>
 
-          <div className="flex gap-4 mb-6">
-            <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
-              Add to Cart
-            </button>
-            <button className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 transition">
-              Buy Now
-            </button>
-          </div>
-
-          <div className="mb-4 text-sm">
-            <strong>Categories:</strong>{' '}
-            {product.categories.map((cat, idx) => (
-              <span key={idx} className="text-gray-700">
-                {cat}
-                {idx < product.categories.length - 1 ? ', ' : ''}
-              </span>
+          <div className="flex gap-3 overflow-x-auto scrollbar-none py-1">
+            {product.images.map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                onClick={() => setActiveImage(img)}
+                className={`w-16 h-16 rounded-lg object-cover cursor-pointer border transition ${
+                  activeImage === img
+                    ? "border-black"
+                    : "border-gray-300 hover:border-gray-500"
+                }`}
+              />
             ))}
           </div>
 
-          <div className="flex gap-4 text-gray-600">
-            <FaFacebookF className="cursor-pointer hover:text-blue-600" />
-            <TiSocialTwitter className="cursor-pointer hover:text-blue-400" />
-            <FaPinterestP className="cursor-pointer hover:text-red-600" />
-            <FaLinkedinIn className="cursor-pointer hover:text-blue-700" />
-            <FaTelegramPlane className="cursor-pointer hover:text-blue-500" />
+        </div>
+
+        {/* Right : Details */}
+        <div className="w-full md:w-1/2 p-6 flex flex-col justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              {product.title}
+            </h2>
+
+            <p className="text-gray-500 text-sm mb-4">
+              {product.description}
+            </p>
+
+            <div className="text-2xl font-semibold text-gray-900 mb-6">
+              ${product.price.toFixed(2)}
+            </div>
+
+            <div className="text-sm font-medium text-green-600 mb-6">
+              In stock: {product.stock}
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button className="flex-1 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition">
+              Add to Cart
+            </button>
+            <button className="flex-1 bg-gray-100 text-gray-800 py-3 rounded-lg hover:bg-gray-200 transition">
+              Buy Now
+            </button>
           </div>
         </div>
+
       </div>
     </div>
   );
