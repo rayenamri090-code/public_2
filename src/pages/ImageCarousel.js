@@ -14,7 +14,7 @@ const ImageCarousel = () => {
     {
       id: 1,
       image:
-        "https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+        "https://nsahotel.com/new/wp-content/uploads/2021/03/wd-accessories-slide-3.jpg",
       title: "Charge Your Phone Safely!",
       description:
         "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.",
@@ -24,7 +24,7 @@ const ImageCarousel = () => {
     {
       id: 2,
       image:
-        "https://images.unsplash.com/photo-1585155770447-2f66e2a397b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+        "https://nsahotel.com/new/wp-content/uploads/2021/03/wd-accessories-slide-2.jpg",
       title: "Premium Charging Solutions",
       description:
         "Experience the latest in charging technology with our safe and efficient power solutions for all your devices.",
@@ -34,7 +34,7 @@ const ImageCarousel = () => {
     {
       id: 3,
       image:
-        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+        "https://airpod.pk/cdn/shop/files/Untitled_design_20.png?v=1701083411&width=1880",
       title: "Fast Wireless Charging",
       description:
         "Cut the cords and embrace the future of wireless power with our advanced charging stations.",
