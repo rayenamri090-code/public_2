@@ -14,7 +14,7 @@ const ImageCarousel = () => {
     {
       id: 1,
       image:
-        "https://nsahotel.com/new/wp-content/uploads/2021/03/wd-accessories-slide-3.jpg",
+        "https://videos.openai.com/az/vg-assets/task_01k9t60jy0fwctx9fveb8svycs%2F1762889178_img_1.webp?se=2025-11-14T00%3A00%3A00Z&sp=r&sv=2024-08-04&sr=b&skoid=aa5ddad1-c91a-4f0a-9aca-e20682cc8969&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-11-11T01%3A08%3A59Z&ske=2025-11-18T01%3A13%3A59Z&sks=b&skv=2024-08-04&sig=tSEyYQlJAkA3f/3q5ApbuUYRO02mhGgBQ%2BloE2WJvQI%3D&ac=oaivgprodscus2",
       title: "Charge Your Phone Safely!",
       description:
         "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.",
@@ -24,7 +24,7 @@ const ImageCarousel = () => {
     {
       id: 2,
       image:
-        "https://nsahotel.com/new/wp-content/uploads/2021/03/wd-accessories-slide-2.jpg",
+        "https://videos.openai.com/az/vg-assets/task_01k9t6amk5f56tmgxpzz62jcv7%2F1762889508_img_1.webp?se=2025-11-14T00%3A00%3A00Z&sp=r&sv=2024-08-04&sr=b&skoid=aa5ddad1-c91a-4f0a-9aca-e20682cc8969&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-11-11T01%3A08%3A59Z&ske=2025-11-18T01%3A13%3A59Z&sks=b&skv=2024-08-04&sig=GqV5v5z5Y74l838fc/exfBkJzYQhPOYPcYf5Cdrk2O8%3D&ac=oaivgprodscus2",
       title: "Premium Charging Solutions",
       description:
         "Experience the latest in charging technology with our safe and efficient power solutions for all your devices.",
@@ -34,7 +34,7 @@ const ImageCarousel = () => {
     {
       id: 3,
       image:
-        "https://airpod.pk/cdn/shop/files/Untitled_design_20.png?v=1701083411&width=1880",
+        "https://videos.openai.com/az/vg-assets/task_01k9t6j10mfq4tma7cavyq9ekk%2F1762889735_img_0.webp?se=2025-11-14T00%3A00%3A00Z&sp=r&sv=2024-08-04&sr=b&skoid=aa5ddad1-c91a-4f0a-9aca-e20682cc8969&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-11-11T01%3A08%3A59Z&ske=2025-11-18T01%3A13%3A59Z&sks=b&skv=2024-08-04&sig=xmu2q5MmUVGcNpnhDjdQ2yBOVe3wV68IP8mXJw3s1bo%3D&ac=oaivgprodscus2",
       title: "Fast Wireless Charging",
       description:
         "Cut the cords and embrace the future of wireless power with our advanced charging stations.",

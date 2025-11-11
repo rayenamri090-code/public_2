@@ -6,8 +6,8 @@ import ImageCarousel from "./pages/ImageCarousel";
 import CategoryList from "./myComponents/CategoryCard";
 import ProductsGrid from "./pages/ProductsGrid";
 import QualityGoods from "./myComponents/QualityGoods";
-import PromoBanners from "./myComponents/PromoBanners";
 import PopularProductsCarousel from "./myComponents/PopularProductsCarousel";
+import SponsorsMap from "./myComponents/SponsorsMap";
 
 const App = () => {
   return (
@@ -16,12 +16,7 @@ const App = () => {
         <Navbar />
         <Routes>
           {/* Define your routes here */}
-          <Route path="/" element={<><ImageCarousel />
-          <CategoryList />
-          <ProductsGrid />
-          <QualityGoods />
-          <PromoBanners />
-          <PopularProductsCarousel/></>} />
+          <Route path="/" element={<><ImageCarousel /><CategoryList /><ProductsGrid /><QualityGoods /><PopularProductsCarousel/><SponsorsMap/></>} />
 
         </Routes>
         <Footer /> {/* Footer appears on all pages */}
