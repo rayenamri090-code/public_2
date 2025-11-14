@@ -14,7 +14,7 @@ const ImageCarousel = () => {
     {
       id: 1,
       image:
-        "https://videos.openai.com/az/vg-assets/task_01k9t60jy0fwctx9fveb8svycs%2F1762889178_img_1.webp?se=2025-11-14T00%3A00%3A00Z&sp=r&sv=2024-08-04&sr=b&skoid=aa5ddad1-c91a-4f0a-9aca-e20682cc8969&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-11-11T01%3A08%3A59Z&ske=2025-11-18T01%3A13%3A59Z&sks=b&skv=2024-08-04&sig=tSEyYQlJAkA3f/3q5ApbuUYRO02mhGgBQ%2BloE2WJvQI%3D&ac=oaivgprodscus2",
+        "https://sora.chatgpt.com/g/gen_01k9t6j24xe46tergm4hw1jkxw",
       title: "Charge Your Phone Safely!",
       description:
         "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.",
@@ -24,7 +24,7 @@ const ImageCarousel = () => {
     {
       id: 2,
       image:
-        "https://videos.openai.com/az/vg-assets/task_01k9t6amk5f56tmgxpzz62jcv7%2F1762889508_img_1.webp?se=2025-11-14T00%3A00%3A00Z&sp=r&sv=2024-08-04&sr=b&skoid=aa5ddad1-c91a-4f0a-9aca-e20682cc8969&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-11-11T01%3A08%3A59Z&ske=2025-11-18T01%3A13%3A59Z&sks=b&skv=2024-08-04&sig=GqV5v5z5Y74l838fc/exfBkJzYQhPOYPcYf5Cdrk2O8%3D&ac=oaivgprodscus2",
+        "https://sora.chatgpt.com/g/gen_01k9t6anr1f9kv52fj9gp2kxxp",
       title: "Premium Charging Solutions",
       description:
         "Experience the latest in charging technology with our safe and efficient power solutions for all your devices.",
