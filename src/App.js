@@ -9,9 +9,10 @@ import CategoryList from "./myComponents/CategoryCard";
 import ProductsGrid from "./pages/ProductsGrid";
 import QualityGoods from "./myComponents/QualityGoods";
 import PopularProductsCarousel from "./myComponents/PopularProductsCarousel";
-import SponsorsMap from "./myComponents/SponsorsMap";
+
 
 import AdminPage from "./pages/AdminPage";
+import SponsorsMapGoogle from "./myComponents/SponsorsMapGoogle";
 
 const AppContent = () => {
   const location = useLocation();
@@ -34,7 +35,8 @@ const AppContent = () => {
               <ProductsGrid />
               <QualityGoods />
               <PopularProductsCarousel />
-              <SponsorsMap />
+   
+              <SponsorsMapGoogle/>
             </>
           }
         />

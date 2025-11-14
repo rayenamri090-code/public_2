@@ -165,9 +165,10 @@ export default function PopularProductsCarousel() {
   };
 
   return (
-    <section className="py-12 bg-white">
+    <section className="py-12 bg-white font-sans">
       <div className="max-w-7xl mx-auto px-6 text-center">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+        {/* Updated Header for Chic Look */}
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 pb-2 border-b-2 border-blue-700/50 inline-block px-4">
           Most Popular Products
         </h2>
         <p className="text-gray-500 mt-2 text-sm md:text-base">
@@ -181,6 +182,10 @@ export default function PopularProductsCarousel() {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
+          // Touch events for mobile compatibility
+          onTouchStart={(e) => handleMouseDown(e.touches[0])}
+          onTouchMove={(e) => handleMouseMove(e.touches[0])}
+          onTouchEnd={handleMouseUp}
         >
           <div
             className={`flex ${
@@ -196,23 +201,40 @@ export default function PopularProductsCarousel() {
             {extendedProducts.map((product, index) => (
               <div
                 key={`${product.id}-${index}`}
-                className="p-4 flex-shrink-0"
+                className="p-3 flex-shrink-0"
                 style={{ width: `${100 / extendedProducts.length}%` }}
               >
-                <div className="bg-white rounded-xl shadow-sm p-4">
+                <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-5 group transition-shadow duration-300 hover:shadow-xl">
+                  {/* Image */}
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="h-32 mx-auto object-contain"
+                    className="h-32 mx-auto object-contain transition-transform duration-300 group-hover:scale-105"
                     style={{ mixBlendMode: "multiply" }}
+                    onError={(e) => {
+                        e.target.onerror = null; 
+                        e.target.src="https://placehold.co/128x128/f3f4f6/9ca3af?text=Product"; 
+                    }}
                   />
-                  <h3 className="mt-4 text-sm font-medium text-gray-800">
+                  
+                  {/* Name (Refined) */}
+                  <h3 className="mt-4 text-sm font-semibold text-gray-900 tracking-wide line-clamp-1 group-hover:text-blue-700 transition-colors duration-300">
                     {product.name}
                   </h3>
-                  <p className="text-xs text-gray-500">{product.type}</p>
-                  <p className="mt-2 text-blue-600 font-bold">
-                    ${product.price.toFixed(2)}
+                  
+                  {/* Type (Chic Uppercase) */}
+                  <p className="text-xs text-gray-500 uppercase tracking-widest mt-0.5">
+                    {product.type}
                   </p>
+                  
+                  {/* Price (Chic, Separated) */}
+                  <div className="flex items-end justify-center mt-2">
+                    <span className="text-base font-semibold text-gray-600 mr-0.5">$</span>
+                    <span className="text-lg font-bold text-gray-900">
+                      {product.price.toFixed(2)}
+                    </span>
+                  </div>
+
                 </div>
               </div>
             ))}
@@ -221,13 +243,15 @@ export default function PopularProductsCarousel() {
           {/* Arrows */}
           <button
             onClick={handlePrev}
-            className="absolute top-1/2 left-2 -translate-y-1/2 text-gray-800 p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition"
+            className="absolute top-1/2 left-0 md:left-2 -translate-y-1/2 text-gray-800 p-2 rounded-full bg-white/70 backdrop-blur-sm hover:bg-gray-200 transition shadow-lg border border-gray-200"
+            aria-label="Previous Product"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={handleNext}
-            className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-800 p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition"
+            className="absolute top-1/2 right-0 md:right-2 -translate-y-1/2 text-gray-800 p-2 rounded-full bg-white/70 backdrop-blur-sm hover:bg-gray-200 transition shadow-lg border border-gray-200"
+            aria-label="Next Product"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
