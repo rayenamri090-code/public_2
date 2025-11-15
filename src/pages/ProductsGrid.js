@@ -87,9 +87,9 @@ const ProductsGrid = () => {
     }, []);
 
     const filters = [
-        { key: "CASES", label: "CASES" },
-        { key: "STRAPS", label: "STRAPS" },
-        { key: "MAGSAFE", label: "MAGSAFE" },
+        { key: "Adapters", label: "Adapters" },
+        { key: "Chargers", label: "Chargers" },
+        { key: "earphones", label: "earphones" },
     ];
 
     // Defensive filtered products (case-insensitive) and limit to 10

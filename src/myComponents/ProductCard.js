@@ -135,7 +135,7 @@ const ProductCard = ({
 
                     {/* Price - Refined for Chic Look */}
                     <div className="flex items-end justify-center mt-2 sm:mt-3">
-                        <span className="text-base font-semibold text-gray-600 mr-1">$</span>
+                        <span className="text-base font-semibold text-gray-600 mr-1">DT</span>
                         <span className="text-xl font-bold text-gray-900">
                             {price?.toFixed(2) || "0.00"}
                         </span>

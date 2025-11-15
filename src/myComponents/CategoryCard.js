@@ -3,34 +3,34 @@ import React from 'react';
 const CircleCategories = () => {
   const categories = [
     {
-      name: "Cases",
+      name: "Data cabels",
       count: 51,
-      image: "https://images.unsplash.com/photo-1605236453806-6ff36864818f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+      image: "https://static.thenounproject.com/png/884572-200.png"
     },
     {
-      name: "MagSafe",
+      name: "Adapters",
       count: 15,
-      image: "https://images.unsplash.com/photo-1609592810793-abeb6c66bc83?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+      image: "https://thumbs.dreamstime.com/b/minimalist-usb-c-to-adapter-icon-black-white-background-414055477.jpg"
     },
     {
-      name: "Cables",
+      name: "Chargers",
       count: 18,
-      image: "https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+      image: "https://t.pimg.jp/092/860/826/1/92860826.jpg"
     },
     {
-      name: "Charger",
+      name: "Earphones",
       count: 12,
-      image: "https://images.unsplash.com/photo-1609592810793-abeb6c66bc83?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+      image: "https://t4.ftcdn.net/jpg/10/56/66/65/360_F_1056666546_5yA2wRTx33DUB1RaKP0Xd1nGecPlvaHb.jpg"
     },
     {
-      name: "Straps",
+      name: "Car charger",
       count: 38,
-      image: "https://images.unsplash.com/photo-1551816230-ef5deaed4a26?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+      image: "data:image/png;base64,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"
     },
     {
-      name: "Power Banks",
+      name: "Glass protection",
       count: 18,
-      image: "https://images.unsplash.com/photo-1609592810793-abeb6c66bc83?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+      image: "https://png.pngtree.com/png-clipart/20230131/ourmid/pngtree-anti-crack-tempered-glass-logo-png-image_6577027.png"
     }
   ];
 

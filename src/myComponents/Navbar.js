@@ -11,82 +11,55 @@ export default function Navbar() {
 
   const navigationItems = [
     {
-      title: "Cases",
+      title: "Data cabels",
       items: [
-        "iPhone Cases",
-        "Samsung Cases",
-        "Google Pixel Cases",
-        "AirPods Cases",
-        "iPad Cases",
-        "MacBook Cases",
-        "Clear Cases",
-        "Leather Cases",
-        "Silicone Cases"
+        "BC_01",
+        "BC_02",
+        "BC_03",
+        "BC_04",
+        "BC_05",
       ]
     },
     {
-      title: "Straps",
+      title: "Adapters",
       items: [
-        "Apple Watch Straps",
-        "Sport Bands",
-        "Leather Straps",
-        "Metal Straps",
-        "Nylon Straps",
-        "Luxury Straps",
-        "Custom Straps",
-        "Milanese Loop"
+        "BL-01",
+        "BL_02",
+        "BL_03",
+        "BL_04",
+        "BL_05",
       ]
     },
     {
-      title: "Power Banks",
+      title: "Chargers",
       items: [
-        "Wireless Power Banks",
-        "MagSafe Power Banks",
-        "High Capacity (20,000mAh+)",
-        "Portable Chargers",
-        "Fast Charging Power Banks",
-        "Solar Power Banks",
-        "Car Power Banks",
-        "Phone Case Power Banks"
+        "BL_01",
+        "BL_02",
+        "BL_03",
+        "BL_04",
+        "BL_05",
       ]
     },
     {
-      title: "Cables",
+      title: "Earphones",
       items: [
-        "Lightning Cables",
-        "USB-C Cables",
-        "MagSafe Cables",
-        "Fast Charging Cables",
-        "Braided Cables",
-        "Extension Cables",
-        "Car Charger Cables",
-        "Multi-Port Cables"
+        "KB_01",
+        "KB_03",
+        "KB_04",
       ]
     },
     {
-      title: "MagSafe",
+      title: "Car charger",
       items: [
-        "MagSafe Chargers",
-        "MagSafe Car Mounts",
-        "MagSafe Stands",
-        "MagSafe Wallets",
-        "MagSafe Power Banks",
-        "MagSafe Grips",
-        "MagSafe Accessories",
-        "MagSafe-Compatible Cases"
+        "CL_01",
+        "CL_02",
       ]
     },
     {
-      title: "Charger",
+      title: "Glass protection",
       items: [
-        "Wall Chargers",
-        "Car Chargers",
-        "Wireless Chargers",
-        "Fast Chargers",
-        "Multi-Port Chargers",
-        "Travel Chargers",
-        "Desktop Chargers",
-        "GaN Chargers"
+        "Print",
+        "Clear",
       ]
     },
     {
