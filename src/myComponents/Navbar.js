@@ -1,11 +1,13 @@
-import { useState } from "react";
-import { Search, Heart, ShoppingCart, Shuffle, Menu, X } from "lucide-react";
-import { Button } from "../components/ui/button.tsx";
+import { useState, useEffect } from "react";
+import { Search, Heart, Shuffle, Menu, X } from "lucide-react";
 import logo from "../logo/logoImg.png";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-  const [cartCount] = useState(0);
-  const [wishlistCount] = useState(0);
+  const navigate = useNavigate();
+
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [compareCount, setCompareCount] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
 
@@ -76,26 +78,51 @@ export default function Navbar() {
       ]
     }
   ];
+useEffect(() => {
+  const updateCounts = () => {
+    const wl = JSON.parse(localStorage.getItem("wishlist") || "[]");
+    const cmp = JSON.parse(localStorage.getItem("compare") || "[]");
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+    setWishlistCount(wl.length);
+    setCompareCount(cmp.length);
   };
 
-  const toggleDropdown = (index) => {
+  updateCounts();
+
+  window.addEventListener("storage", updateCounts);
+  window.addEventListener("compareUpdated", updateCounts);
+  window.addEventListener("wishlistUpdated", updateCounts);
+
+  return () => {
+    window.removeEventListener("storage", updateCounts);
+    window.removeEventListener("compareUpdated", updateCounts);
+    window.removeEventListener("wishlistUpdated", updateCounts);
+  };
+}, []);
+
+
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const toggleDropdown = (index) =>
     setActiveDropdown(activeDropdown === index ? null : index);
+
+  const handleCompareClick = () => {
+    // No need to pass state anymore, Compare page will read from localStorage
+    navigate("/compare");
+  };
+
+  const handleWishlistClick = () => {
+    navigate("/wishlist");
   };
 
   return (
     <header className="w-full shadow-sm bg-white border-b">
       <div className="container mx-auto flex items-center justify-between py-4 px-4 sm:px-6">
         {/* Logo */}
-        <div className="flex items-center space-x-2">
-          <img
-            src={logo}
-            alt="BlackWave Logo"
-            className="w-8 h-8 object-contain"
-          />
-          <span className="text-xl font-bold">BlackWave<span className="text-black">.</span></span>
+        <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate("/")}>
+          <img src={logo} alt="BlackWave Logo" className="w-8 h-8 object-contain" />
+          <span className="text-xl font-bold">
+            BlackWave<span className="text-black">.</span>
+          </span>
         </div>
 
         {/* Desktop Navigation */}
@@ -107,7 +134,6 @@ export default function Navbar() {
                   {item.title}
                 </button>
               </div>
-
               <div className="absolute left-0 top-full pt-2 hidden group-hover:block z-50">
                 <div className="bg-white shadow-lg border rounded-lg min-w-[200px]">
                   <ul className="py-2">
@@ -128,37 +154,32 @@ export default function Navbar() {
 
         {/* Right Side Actions */}
         <div className="flex items-center space-x-4 sm:space-x-5 text-gray-700">
-          {/* Login/Register - Hidden on mobile */}
-          <Button variant="link" className="hidden sm:flex text-sm font-medium hover:text-blue-600">
-            Login / Register
-          </Button>
-
-          {/* Icons - Hidden on small mobile */}
           <Search className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors hidden sm:block" />
 
-          <div className="relative hidden sm:block">
-            <Shuffle className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors" />
-            <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-              0
-            </span>
-          </div>
-
-          <div className="relative hidden sm:block">
-            <Heart className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors" />
-            <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-              {wishlistCount}
-            </span>
-          </div>
-
-          {/* Cart - Always visible but text hidden on mobile */}
-          <div className="relative flex items-center space-x-2">
-            <div className="relative">
-              <ShoppingCart className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors" />
+          {/* Compare */}
+          <div
+            className="relative hidden sm:block cursor-pointer"
+            onClick={handleCompareClick}
+          >
+            <Shuffle className="w-5 h-5 hover:text-blue-600 transition-colors" />
+            {compareCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                {cartCount}
+                {compareCount}
               </span>
-            </div>
-            <span className="text-sm font-medium hidden sm:block">$0.00</span>
+            )}
+          </div>
+
+          {/* Wishlist */}
+          <div
+            className="relative hidden sm:block cursor-pointer"
+            onClick={handleWishlistClick}
+          >
+            <Heart className="w-5 h-5 hover:text-blue-600 transition-colors" />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                {wishlistCount}
+              </span>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -174,7 +195,7 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="lg:hidden border-t bg-white">
-          {/* Mobile Search Bar */}
+          {/* Mobile Search */}
           <div className="px-4 py-3 border-b">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -195,7 +216,11 @@ export default function Navbar() {
                   onClick={() => toggleDropdown(index)}
                 >
                   {item.title}
-                  <span className={`transform transition-transform ${activeDropdown === index ? 'rotate-180' : ''}`}>
+                  <span
+                    className={`transform transition-transform ${
+                      activeDropdown === index ? "rotate-180" : ""
+                    }`}
+                  >
                     ▼
                   </span>
                 </button>
@@ -206,43 +231,33 @@ export default function Navbar() {
                       <button
                         key={subIndex}
                         className="block py-2 text-sm text-gray-600 hover:text-blue-600"
-                        onClick={() => {/* handle item click */ }}
+                        onClick={() => {}}
                       >
                         {subItem}
                       </button>
                     ))}
-
                   </div>
                 )}
               </div>
             ))}
           </nav>
 
-          {/* Mobile Actions */}
-          <div className="px-4 py-4 border-t bg-gray-50">
-            <div className="flex space-x-4 mb-4">
-              <Button variant="link" className="flex-1 text-center justify-center hover:text-blue-600">
-                Login
-              </Button>
-              <Button variant="link" className="flex-1 text-center justify-center hover:text-blue-600">
-                Register
-              </Button>
-            </div>
-
-            <div className="flex justify-around text-gray-600">
-              <button className="flex flex-col items-center p-2 hover:text-blue-600">
-                <Search className="w-5 h-5" />
-                <span className="text-xs mt-1">Search</span>
-              </button>
-              <button className="flex flex-col items-center p-2 hover:text-blue-600">
-                <Shuffle className="w-5 h-5" />
-                <span className="text-xs mt-1">Compare</span>
-              </button>
-              <button className="flex flex-col items-center p-2 hover:text-blue-600">
-                <Heart className="w-5 h-5" />
-                <span className="text-xs mt-1">Wishlist</span>
-              </button>
-            </div>
+          {/* Mobile Compare/Wishlist */}
+          <div className="px-4 py-4 border-t bg-gray-50 flex justify-around text-gray-600">
+            <button
+              className="flex flex-col items-center p-2 hover:text-blue-600"
+              onClick={handleCompareClick}
+            >
+              <Shuffle className="w-5 h-5" />
+              <span className="text-xs mt-1">{compareCount} Compare</span>
+            </button>
+            <button
+              className="flex flex-col items-center p-2 hover:text-blue-600"
+              onClick={handleWishlistClick}
+            >
+              <Heart className="w-5 h-5" />
+              <span className="text-xs mt-1">{wishlistCount} Wishlist</span>
+            </button>
           </div>
         </div>
       )}

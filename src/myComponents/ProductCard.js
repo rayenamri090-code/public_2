@@ -1,153 +1,229 @@
-import React, { useState } from 'react';
-import { Sliders, Eye, Heart, ShoppingCart } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Eye, Heart, Sliders } from "lucide-react";
 
-// Mock implementation for ProductModal for runnable single file
+// --- Premium Modal ---
 const ProductModal = ({ product, onClose }) => {
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/70 p-4" onClick={onClose}>
-            <div className="bg-white p-6 rounded-xl max-w-lg w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-2xl font-bold mb-3 text-gray-900">{product.title}</h3>
-                <p className="text-xl font-semibold text-blue-700 mb-4">${product.price.toFixed(2)}</p>
-                <img 
-                    src={product.images[0]} 
-                    alt={product.title} 
-                    className="w-full h-auto object-cover rounded-lg mb-4" 
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={onClose}
+        >
+            <div
+                className="bg-white p-6 rounded-2xl max-w-lg w-full shadow-xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <h3 className="text-3xl font-semibold tracking-wide text-gray-900 mb-3">
+                    {product.title}
+                </h3>
+
+                <p className="text-xl font-semibold text-gray-700 mb-4">
+                    DT {product.price.toFixed(2)}
+                </p>
+
+                <img
+                    src={product.images[0]}
+                    alt={product.title}
+                    className="w-full h-auto rounded-xl object-cover mb-4 shadow-sm"
                     onError={(e) => {
-                        e.target.onerror = null; 
-                        e.target.src="https://placehold.co/600x600/f3f4f6/9ca3af?text=Product"; 
+                        e.target.onerror = null;
+                        e.target.src =
+                            "https://placehold.co/600x600/f3f4f6/9ca3af?text=Product";
                     }}
                 />
-                <p className="text-gray-700 text-sm mb-2">{product.description}</p>
-                <p className="text-sm text-gray-500">In Stock: {product.stock}</p>
-                <button 
-                    onClick={onClose} 
-                    className="mt-6 w-full py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-black transition-colors"
+
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                    {product.description}
+                </p>
+
+                <button
+                    onClick={onClose}
+                    className="w-full py-3 rounded-2xl bg-gray-900 text-white font-medium hover:bg-black transition"
                 >
-                    Close Quick View
+                    Close
                 </button>
             </div>
         </div>
     );
 };
 
-
+// --- MAIN PREMIUM CARD ---
 const ProductCard = ({
+    id,
     image,
     name,
     price,
     type,
     compatibleDevices,
     isHot,
-    onAddToCart,
-    onAddToWishlist
+    onClick,
 }) => {
     const [showModal, setShowModal] = useState(false);
 
-    // Defensive structure for modal content
+    // Like state
+    const [liked, setLiked] = useState(false);
+
+    // Compare state
+    const [compared, setCompared] = useState(false);
+
+    // Load localStorage states on mount
+    useEffect(() => {
+        const wl = JSON.parse(localStorage.getItem("wishlist") || "[]");
+        const cmp = JSON.parse(localStorage.getItem("compare") || "[]");
+
+        setLiked(wl.some(item => item.id === id));
+        setCompared(cmp.some(item => item.id === id));
+    }, [id]);
+
+    // LIKE HANDLER (FULL OBJECT VERSION)
+    const toggleLike = (e) => {
+        e.stopPropagation();
+
+        let wl = JSON.parse(localStorage.getItem("wishlist") || "[]");
+
+        const exists = wl.some(item => item.id === id);
+
+        if (exists) {
+            wl = wl.filter(item => item.id !== id);
+            setLiked(false);
+        } else {
+            wl.push({
+                id,
+                name,
+                image,
+                price,
+                type,
+                compatibleDevices,
+            });
+            setLiked(true);
+        }
+
+        localStorage.setItem("wishlist", JSON.stringify(wl));
+        window.dispatchEvent(new Event("wishlistUpdated"));
+    };
+
+    // COMPARE HANDLER (unchanged)
+    const toggleCompare = (e) => {
+        e.stopPropagation();
+
+        let compareList = JSON.parse(localStorage.getItem("compare") || "[]");
+        const exists = compareList.some(item => item.id === id);
+
+        if (exists) {
+            compareList = compareList.filter(item => item.id !== id);
+            setCompared(false);
+        } else {
+            compareList.push({
+                id,
+                name,
+                price,
+                image,
+                type,
+                compatibleDevices,
+            });
+            setCompared(true);
+        }
+
+        localStorage.setItem("compare", JSON.stringify(compareList));
+        window.dispatchEvent(new Event("compareUpdated"));
+    };
+
+    // Modal product data
     const modalProduct = {
-        images: [image || "https://placehold.co/600x600/f3f4f6/9ca3af?text=Product"],
-        title: name || "Untitled Product",
-        price: price || 0,
-        description: `Compatible with ${compatibleDevices?.join(", ") || "Various Devices"}. Category: ${type || "N/A"}.`,
-        stock: Math.floor(Math.random() * 50) + 10,
-        categories: [type, ...(compatibleDevices || [])],
-    };
-
-
-    const handleQuickView = () => {
-        setShowModal(true);
-    };
-
-    const handleCloseModal = () => {
-        setShowModal(false);
+        images: [image],
+        title: name,
+        price: price,
+        description: `Compatible with ${compatibleDevices?.join(", ") || type}.`,
     };
 
     return (
         <>
-            <div className="group relative w-full bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out cursor-pointer">
-                {/* Product Image Container */}
+            {/* CARD */}
+            <div
+                onClick={onClick}
+                className="group w-full bg-white rounded-2xl border border-transparent hover:border-gray-200 overflow-hidden shadow-sm hover:shadow-xl cursor-pointer transition-all duration-300"
+            >
+                {/* IMAGE */}
                 <div className="relative overflow-hidden bg-gray-50 aspect-[3/4]">
                     <img
                         src={image}
                         alt={name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         onError={(e) => {
-                            e.target.onerror = null; 
-                            e.target.src="https://placehold.co/300x400/f3f4f6/9ca3af?text=Product"; 
+                            e.target.onerror = null;
+                            e.target.src =
+                                "https://placehold.co/300x400/f3f4f6/9ca3af?text=Product";
                         }}
                     />
 
-                    {/* Hot Badge */}
+                    {/* HOT BADGE */}
                     {isHot && (
-                        <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold tracking-wider z-10 shadow-md">
-                            HOT
+                        <div className="absolute top-3 right-3 bg-black text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide shadow-md">
+                            NEW
                         </div>
                     )}
 
-                    {/* Action Buttons (Whislist, Quick View, Compare) */}
-                    <div className="absolute top-3 left-3 flex flex-col items-center gap-2">
-                        {[
-                            { icon: Heart, label: 'Wishlist', onClick: onAddToWishlist },
-                            { icon: Eye, label: 'Quick View', onClick: handleQuickView },
-                            { icon: Sliders, label: 'Compare', onClick: () => console.log('Compare clicked') },
-                        ].map(({ icon: Icon, label, onClick }, idx) => (
-                            <button
-                                key={label}
-                                onClick={(e) => { e.stopPropagation(); onClick(); }}
-                                className={`bg-white/95 backdrop-blur-sm text-gray-500 hover:text-blue-700 p-2 rounded-full shadow-md transition-all duration-300 
-                                            // Conditional visibility: Wishlist is always visible on small screens
-                                            ${idx === 0 ? 'block' : 'hidden sm:block'} 
-                                            // Desktop hover effect
-                                            sm:transform sm:translate-x-[-150%] sm:group-hover:translate-x-0 sm:delay-${idx * 75}`}
-                                aria-label={label}
-                            >
-                                <Icon size={16} />
-                            </button>
-                        ))}
-                    </div>
+                    {/* ACTION ICONS */}
+                    <div className="absolute top-3 left-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
 
-                    {/* Add to Cart Button (Bottom Slide Up) */}
-                    <div className="absolute bottom-0 left-0 right-0 transition-all duration-300 transform translate-y-full group-hover:translate-y-0">
+                        {/* LIKE */}
                         <button
-                            onClick={(e) => { e.stopPropagation(); onAddToCart(); }}
-                            className="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 text-sm font-semibold uppercase tracking-widest flex items-center justify-center transition-all duration-300 shadow-lg shadow-blue-500/40"
+                            onClick={toggleLike}
+                            className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md hover:bg-white transition"
                         >
-                            <ShoppingCart size={16} className="mr-2" />
-                            ADD TO CART
+                            <Heart
+                                size={18}
+                                className={liked ? "text-red-600" : "text-gray-700"}
+                                fill={liked ? "red" : "none"}
+                            />
+                        </button>
+
+                        {/* QUICK VIEW */}
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowModal(true);
+                            }}
+                            className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md hover:bg-white transition"
+                        >
+                            <Eye size={18} className="text-gray-700" />
+                        </button>
+
+                        {/* COMPARE */}
+                        <button
+                            onClick={toggleCompare}
+                            className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md hover:bg-white transition"
+                        >
+                            <Sliders
+                                size={18}
+                                className={compared ? "text-blue-700" : "text-gray-700"}
+                            />
                         </button>
                     </div>
                 </div>
 
-                {/* Product Details */}
-                <div className="p-3 sm:p-4 text-center">
-                    {/* Name */}
-                    {/* Updated: Switched to font-semibold and wider tracking for chic aesthetic */}
-                    <h3 className="font-semibold text-gray-900 text-sm sm:text-base tracking-widest line-clamp-2 leading-snug min-h-[2.8rem] transition-colors duration-300 group-hover:text-blue-700">
+                {/* PRODUCT INFO */}
+                <div className="p-4 text-center">
+                    <h3 className="text-sm sm:text-base font-medium text-gray-900 tracking-wide line-clamp-2 min-h-[2.6rem] group-hover:text-gray-700 transition">
                         {name}
                     </h3>
 
-                    {/* Compatible Devices */}
-                    <div className="mt-1 flex justify-center">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide line-clamp-1">
-                            {compatibleDevices?.join(' · ') || type}
-                        </span>
-                    </div>
+                    <p className="text-xs text-gray-500 tracking-wide mt-1 line-clamp-1">
+                        {compatibleDevices?.join(" · ") || type}
+                    </p>
 
-                    {/* Price - Refined for Chic Look */}
-                    <div className="flex items-end justify-center mt-2 sm:mt-3">
-                        <span className="text-base font-semibold text-gray-600 mr-1">DT</span>
-                        <span className="text-xl font-bold text-gray-900">
-                            {price?.toFixed(2) || "0.00"}
+                    <div className="mt-3">
+                        <span className="text-xl font-semibold text-gray-900">
+                            {price.toFixed(2)} DT
                         </span>
                     </div>
                 </div>
             </div>
 
-            {/* Modal */}
+            {/* MODAL */}
             {showModal && (
-                <ProductModal 
-                    product={modalProduct} 
-                    onClose={handleCloseModal} 
+                <ProductModal
+                    product={modalProduct}
+                    onClose={() => setShowModal(false)}
                 />
             )}
         </>
