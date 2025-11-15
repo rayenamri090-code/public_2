@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { Search, Heart, ShoppingCart, Shuffle, Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Button } from "../components/ui/button.tsx";
 import logo from "../logo/logoImg.png";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-  const [cartCount] = useState(0);
-  const [wishlistCount] = useState(0);
+  const navigate = useNavigate();
+
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [compareCount, setCompareCount] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
 
@@ -19,15 +22,25 @@ export default function Navbar() {
     { title: "More", key: "more", items: ["Screen Protectors", "Camera Lenses", "Phone Grips", "Cleaning Kits", "Adapters", "Docks & Hubs", "Audio Accessories", "Gift Cards"] }
   ];
 
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-  const toggleDropdown = (index) => setActiveDropdown(activeDropdown === index ? null : index);
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const toggleDropdown = (index) => {
+    setActiveDropdown(activeDropdown === index ? null : index);
+  };
 
   return (
     <header className="w-full shadow-sm bg-white border-b sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between py-4 px-4 sm:px-6">
+        {/* Logo */}
         <div className="flex items-center space-x-2">
-          <img src={logo} alt="BlackWave Logo" className="w-8 h-8 object-contain" />
-          <Link to="/" className="text-xl font-bold">BlackWave</Link>
+          <img
+            src={logo}
+            alt="BlackWave Logo"
+            className="w-8 h-8 object-contain"
+          />
+          <span className="text-xl font-bold">BlackWave<span className="text-black">.</span></span>
         </div>
 
         <nav className="hidden lg:flex space-x-6 relative">
@@ -38,7 +51,6 @@ export default function Navbar() {
                   {item.title}
                 </Link>
               </div>
-
               <div className="absolute left-0 top-full pt-2 hidden group-hover:block z-50">
                 <div className="bg-white shadow-lg border rounded-lg min-w-[200px] animate-fadeIn">
                   <ul className="py-2">
@@ -60,26 +72,37 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center space-x-4 sm:space-x-5 text-gray-700">
-          <Link to="/login" className="hidden sm:flex text-sm font-medium hover:text-blue-600">Login / Register</Link>
+          {/* Login/Register - Hidden on mobile */}
+          <Button variant="link" className="hidden sm:flex text-sm font-medium hover:text-blue-600">
+            Login / Register
+          </Button>
 
-          <Search className="w-5 h-5 cursor-pointer hover:text-blue-600 hidden sm:block" />
+          {/* Icons - Hidden on small mobile */}
+          <Search className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors hidden sm:block" />
 
           <div className="relative hidden sm:block">
-            <Shuffle className="w-5 h-5 cursor-pointer hover:text-blue-600" />
-            <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">0</span>
+            <Shuffle className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors" />
+            <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+              0
+            </span>
           </div>
 
           <div className="relative hidden sm:block">
-            <Heart className="w-5 h-5 cursor-pointer hover:text-blue-600" />
-            <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{wishlistCount}</span>
+            <Heart className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors" />
+            <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+              {wishlistCount}
+            </span>
           </div>
 
+          {/* Cart - Always visible but text hidden on mobile */}
           <div className="relative flex items-center space-x-2">
             <div className="relative">
-              <ShoppingCart className="w-5 h-5 cursor-pointer hover:text-blue-600" />
-              <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{cartCount}</span>
+              <ShoppingCart className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors" />
+              <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                {cartCount}
+              </span>
             </div>
-            <span className="text-sm font-medium hidden sm:block">0.00 DT</span>
+            <span className="text-sm font-medium hidden sm:block">$0.00</span>
           </div>
 
           <button
@@ -92,7 +115,8 @@ export default function Navbar() {
       </div>
 
       {isMobileMenuOpen && (
-        <div className="lg:hidden border-t bg-white animate-slideDown">
+        <div className="lg:hidden border-t bg-white">
+          {/* Mobile Search Bar */}
           <div className="px-4 py-3 border-b">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -112,7 +136,9 @@ export default function Navbar() {
                   onClick={() => toggleDropdown(index)}
                 >
                   {item.title}
-                  <span className={`transform transition-transform ${activeDropdown === index ? "rotate-180" : ""}`}>▼</span>
+                  <span className={`transform transition-transform ${activeDropdown === index ? 'rotate-180' : ''}`}>
+                    ▼
+                  </span>
                 </button>
 
                 {activeDropdown === index && (
@@ -122,6 +148,7 @@ export default function Navbar() {
                         key={subIndex}
                         to={`/product/${subItem}`}
                         className="block py-2 text-sm text-gray-600 hover:text-blue-600"
+                        onClick={() => {/* handle item click */ }}
                       >
                         {subItem}
                       </Link>
@@ -132,10 +159,15 @@ export default function Navbar() {
             ))}
           </nav>
 
+          {/* Mobile Actions */}
           <div className="px-4 py-4 border-t bg-gray-50">
             <div className="flex space-x-4 mb-4">
-              <Link to="/login" className="flex-1 text-center hover:text-blue-600">Login</Link>
-              <Link to="/register" className="flex-1 text-center hover:text-blue-600">Register</Link>
+              <Button variant="link" className="flex-1 text-center justify-center hover:text-blue-600">
+                Login
+              </Button>
+              <Button variant="link" className="flex-1 text-center justify-center hover:text-blue-600">
+                Register
+              </Button>
             </div>
 
             <div className="flex justify-around text-gray-600">

@@ -10,9 +10,14 @@ import ProductsGrid from "./pages/ProductsGrid";
 import QualityGoods from "./myComponents/QualityGoods";
 import PopularProductsCarousel from "./myComponents/PopularProductsCarousel";
 
-
 import AdminPage from "./pages/AdminPage";
 import SponsorsMapGoogle from "./myComponents/SponsorsMapGoogle";
+
+// NEW IMPORTS
+import ProductPage from "./pages/ProductDisplay";
+
+import Compare from "./pages/Compare";
+import LikedProduct from "./pages/LikedProduct";
 
 const AppContent = () => {
   const location = useLocation();
@@ -20,12 +25,11 @@ const AppContent = () => {
 
   return (
     <div className="App flex flex-col min-h-screen">
-
-      {/* Show Navbar only for public pages */}
+      {/* Navbar for public pages */}
       {!isAdminRoute && <Navbar />}
 
       <Routes>
-        {/* Public */}
+        {/* Home Page */}
         <Route
           path="/"
           element={
@@ -35,17 +39,25 @@ const AppContent = () => {
               <ProductsGrid />
               <QualityGoods />
               <PopularProductsCarousel />
-   
-              <SponsorsMapGoogle/>
+              <SponsorsMapGoogle />
             </>
           }
         />
 
-        {/* Admin Page (NO Navbar, NO Footer) */}
+        {/* Product Display Page */}
+        <Route path="/product/:id" element={<ProductPage />} />
+
+        {/* Wishlist Page */}
+        <Route path="/wishlist" element={<LikedProduct />} />
+
+        {/* Compare Page */}
+        <Route path="/compare" element={<Compare />} />
+
+        {/* Admin Page (No Navbar/Footer) */}
         <Route path="/admin" element={<AdminPage />} />
       </Routes>
 
-      {/* Show Footer only for public pages */}
+      {/* Footer for public pages */}
       {!isAdminRoute && <Footer />}
     </div>
   );

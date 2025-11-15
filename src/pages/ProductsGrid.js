@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import ProductCard from "../myComponents/ProductCard"; // <- verify this path in your project
-
+import { useNavigate } from "react-router-dom";
 /**
  * Defensive ProductsGrid
  * - Shows up to 10 products per selected category
@@ -9,6 +9,7 @@ import ProductCard from "../myComponents/ProductCard"; // <- verify this path in
  */
 const ProductsGrid = () => {
     const [activeFilter, setActiveFilter] = useState("CASES");
+    const navigate = useNavigate(); 
 
     // -- product dataset (guarantee fields exist) --
     const products = useMemo(() => {
@@ -68,6 +69,7 @@ const ProductsGrid = () => {
             // add more real items if you have them...
         ];
 
+
         // create extra sample items to ensure categories can reach 10 items
         const generated = Array.from({ length: 30 }, (_, i) => {
             const kind = ["CASES", "STRAPS", "MAGSAFE"][i % 3];
@@ -85,7 +87,9 @@ const ProductsGrid = () => {
 
         return [...base, ...generated];
     }, []);
-
+    useEffect(() => {
+        localStorage.setItem("all_products_backup", JSON.stringify(products));
+    }, [products]);
     const filters = [
         { key: "Adapters", label: "Adapters" },
         { key: "Chargers", label: "Chargers" },
@@ -129,9 +133,9 @@ const ProductsGrid = () => {
     return (
         <div className="bg-white min-h-screen py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                
+
                 {/* Header Title */}
-               
+
 
                 {/* Filter Tabs */}
                 <div className="flex flex-wrap justify-center gap-4 mb-12">
@@ -158,17 +162,17 @@ const ProductsGrid = () => {
                             const key = product.id ?? `${product.name}-${Math.random()}`;
                             return (
                                 <ProductCard
-                                    key={key}
+                                    id={product.id}
                                     image={product.image || product.images?.[0] || ""}
                                     name={product.name || "Untitled product"}
                                     price={typeof product.price === "number" ? product.price : 0}
                                     type={product.type || ""}
-                                    compatibleDevices={product.compatibleDevices}
-                                    rating={product.rating || 0}
+                                    compatibleDevices={product.compatibleDevices || []}
                                     isHot={!!product.isHot}
-                                    onAddToCart={() => handleAddToCart(product)}
-                                    onAddToWishlist={() => handleAddToWishlist(product)}
+                                    onClick={() => navigate(`/product/${product.id}`)}
                                 />
+
+
                             );
                         })
                     ) : (
