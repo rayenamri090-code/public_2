@@ -18,6 +18,7 @@ import ProductPage from "./pages/ProductDisplay";
 
 import Compare from "./pages/Compare";
 import LikedProduct from "./pages/LikedProduct";
+import NotFound from "./pages/NotFound";
 
 const AppContent = () => {
   const location = useLocation();
@@ -27,35 +28,37 @@ const AppContent = () => {
     <div className="App flex flex-col min-h-screen">
       {/* Navbar for public pages */}
       {!isAdminRoute && <Navbar />}
+<Routes>
+  {/* Home Page */}
+  <Route
+    path="/"
+    element={
+      <>
+        <ImageCarousel />
+        <CategoryList />
+        <ProductsGrid />
+        <QualityGoods />
+        <PopularProductsCarousel />
+        <SponsorsMapGoogle />
+      </>
+    }
+  />
 
-      <Routes>
-        {/* Home Page */}
-        <Route
-          path="/"
-          element={
-            <>
-              <ImageCarousel />
-              <CategoryList />
-              <ProductsGrid />
-              <QualityGoods />
-              <PopularProductsCarousel />
-              <SponsorsMapGoogle />
-            </>
-          }
-        />
+  {/* Product Display Page */}
+  <Route path="/product/:id" element={<ProductPage />} />
 
-        {/* Product Display Page */}
-        <Route path="/product/:id" element={<ProductPage />} />
+  {/* Wishlist Page */}
+  <Route path="/wishlist" element={<LikedProduct />} />
 
-        {/* Wishlist Page */}
-        <Route path="/wishlist" element={<LikedProduct />} />
+  {/* Compare Page */}
+  <Route path="/compare" element={<Compare />} />
 
-        {/* Compare Page */}
-        <Route path="/compare" element={<Compare />} />
+  {/* Admin Page */}
+  <Route path="/admin" element={<AdminPage />} />
 
-        {/* Admin Page (No Navbar/Footer) */}
-        <Route path="/admin" element={<AdminPage />} />
-      </Routes>
+  {/*  Fallback Route */}
+  <Route path="*" element={<NotFound />} />
+</Routes>
 
       {/* Footer for public pages */}
       {!isAdminRoute && <Footer />}
