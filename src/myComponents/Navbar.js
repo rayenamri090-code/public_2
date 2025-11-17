@@ -48,7 +48,7 @@ export default function Navbar() {
       <div className="container mx-auto flex items-center justify-between py-4 px-4 sm:px-6">
         <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate("/")}>
           <img src={logo} alt="Logo" className="w-8 h-8 object-contain"/>
-          <span className="text-xl font-bold">BlackWave<span className="text-black">.</span></span>
+          <span className="text-xl font-bold">BlackWave<span className="text-black"></span></span>
         </div>
 
         {/* Desktop Navigation */}
