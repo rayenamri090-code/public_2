@@ -18,6 +18,9 @@ import Compare from "./pages/Compare";
 import LikedProduct from "./pages/LikedProduct";
 import NotFound from "./pages/NotFound";
 
+// NEW: CategoryPage import
+import CategoryPage from "./pages/CategoryPage";
+
 const AppContent = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -28,7 +31,7 @@ const AppContent = () => {
       {/* Navbar */}
       {!isAdminRoute && <Navbar />}
 
-      {/* MAIN CONTENT — this is the missing part */}
+      {/* MAIN CONTENT */}
       <div className="flex-1">
         <Routes>
           {/* Home Page */}
@@ -46,10 +49,20 @@ const AppContent = () => {
             }
           />
 
+          {/* Product Page */}
           <Route path="/product/:id" element={<ProductPage />} />
+
+          {/* Wishlist & Compare */}
           <Route path="/wishlist" element={<LikedProduct />} />
           <Route path="/compare" element={<Compare />} />
+
+          {/* Category Page */}
+          <Route path="/shop/category/:slug" element={<CategoryPage />} />
+
+          {/* Admin */}
           <Route path="/admin" element={<AdminPage />} />
+
+          {/* Fallback */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
