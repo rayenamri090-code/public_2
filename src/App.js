@@ -13,9 +13,7 @@ import PopularProductsCarousel from "./myComponents/PopularProductsCarousel";
 import AdminPage from "./pages/AdminPage";
 import SponsorsMapGoogle from "./myComponents/SponsorsMapGoogle";
 
-// NEW IMPORTS
 import ProductPage from "./pages/ProductDisplay";
-
 import Compare from "./pages/Compare";
 import LikedProduct from "./pages/LikedProduct";
 import NotFound from "./pages/NotFound";
@@ -26,42 +24,39 @@ const AppContent = () => {
 
   return (
     <div className="App flex flex-col min-h-screen">
-      {/* Navbar for public pages */}
+
+      {/* Navbar */}
       {!isAdminRoute && <Navbar />}
-<Routes>
-  {/* Home Page */}
-  <Route
-    path="/"
-    element={
-      <>
-        <ImageCarousel />
-        <CategoryList />
-        <ProductsGrid />
-        <QualityGoods />
-        <PopularProductsCarousel />
-        <SponsorsMapGoogle />
-      </>
-    }
-  />
 
-  {/* Product Display Page */}
-  <Route path="/product/:id" element={<ProductPage />} />
+      {/* MAIN CONTENT — this is the missing part */}
+      <div className="flex-1">
+        <Routes>
+          {/* Home Page */}
+          <Route
+            path="/"
+            element={
+              <>
+                <ImageCarousel />
+                <CategoryList />
+                <ProductsGrid />
+                <QualityGoods />
+                <PopularProductsCarousel />
+                <SponsorsMapGoogle />
+              </>
+            }
+          />
 
-  {/* Wishlist Page */}
-  <Route path="/wishlist" element={<LikedProduct />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/wishlist" element={<LikedProduct />} />
+          <Route path="/compare" element={<Compare />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
 
-  {/* Compare Page */}
-  <Route path="/compare" element={<Compare />} />
-
-  {/* Admin Page */}
-  <Route path="/admin" element={<AdminPage />} />
-
-  {/*  Fallback Route */}
-  <Route path="*" element={<NotFound />} />
-</Routes>
-
-      {/* Footer for public pages */}
+      {/* Footer */}
       {!isAdminRoute && <Footer />}
+
     </div>
   );
 };

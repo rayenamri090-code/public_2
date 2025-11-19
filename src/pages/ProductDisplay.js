@@ -10,26 +10,24 @@ const ProductPage = () => {
   const [liked, setLiked] = useState(false);
   const [compared, setCompared] = useState(false);
 
-  // 🔵 Load your product dataset (same structure as ProductsGrid)
+  // Load all products from localStorage
   const allProducts = useMemo(() => {
     return JSON.parse(localStorage.getItem("all_products_backup") || "[]");
   }, []);
 
-  // 🔵 Get product by ID
+  // Retrieve product & restore like/compare states
   useEffect(() => {
     const found = allProducts.find((p) => p.id === productId);
     setProduct(found || null);
 
-    // Restore like state
     const wl = JSON.parse(localStorage.getItem("wishlist") || "[]");
     setLiked(wl.includes(productId));
 
-    // Restore compare state
     const cmp = JSON.parse(localStorage.getItem("compare") || "[]");
     setCompared(cmp.includes(productId));
   }, [allProducts, productId]);
 
-  // ❤️ toggle like
+  // Toggle wishlist item
   const toggleLike = () => {
     let wl = JSON.parse(localStorage.getItem("wishlist") || "[]");
 
@@ -44,7 +42,7 @@ const ProductPage = () => {
     localStorage.setItem("wishlist", JSON.stringify(wl));
   };
 
-  // 🔁 toggle compare
+  // Toggle compare item
   const toggleCompare = () => {
     let cmp = JSON.parse(localStorage.getItem("compare") || "[]");
 
@@ -59,7 +57,7 @@ const ProductPage = () => {
     localStorage.setItem("compare", JSON.stringify(cmp));
   };
 
-  // No product found
+  // If product not found
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600 text-xl">
@@ -103,7 +101,6 @@ const ProductPage = () => {
 
           {/* Buttons */}
           <div className="flex items-center gap-4 mb-10">
-
             {/* Add to cart */}
             <button className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl text-lg font-semibold hover:bg-gray-800 transition">
               <ShoppingCart size={20} />
@@ -131,7 +128,6 @@ const ProductPage = () => {
                 className={compared ? "text-blue-600" : "text-gray-700"}
               />
             </button>
-
           </div>
 
           {/* Description */}
