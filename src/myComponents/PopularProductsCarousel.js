@@ -229,7 +229,7 @@ export default function PopularProductsCarousel() {
                   
                   {/* Price (Chic, Separated) */}
                   <div className="flex items-end justify-center mt-2">
-                    <span className="text-base font-semibold text-gray-600 mr-0.5">$</span>
+                    <span className="text-base font-semibold text-gray-600 mr-0.5">DT</span>
                     <span className="text-lg font-bold text-gray-900">
                       {product.price.toFixed(2)}
                     </span>
