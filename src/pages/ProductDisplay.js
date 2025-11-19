@@ -88,7 +88,7 @@ const ProductPage = () => {
 
           {/* Price */}
           <p className="text-2xl font-semibold text-blue-700 mb-4">
-            {product.price} TND
+            {product.price} TD
           </p>
 
           {/* Rating */}

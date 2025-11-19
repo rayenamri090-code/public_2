@@ -24,7 +24,7 @@ const CategoryPage = () => {
             <div key={product.id} className="border p-4 rounded-lg hover:shadow-lg transition">
               <img src={product.image} alt={product.name} className="w-full h-48 object-cover mb-2 rounded" />
               <h2 className="text-lg font-semibold">{product.name}</h2>
-              <p className="text-blue-700 font-bold">{product.price} TND</p>
+              <p className="text-blue-700 font-bold">{product.price} TD</p>
             </div>
           ))}
         </div>
