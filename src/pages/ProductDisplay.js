@@ -1,60 +1,66 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { Heart, GitCompare, ShoppingCart } from "lucide-react";
+import { getProducts } from "../utils/productStorage";
 
 const ProductPage = () => {
   const { id } = useParams();
-  const productId = Number(id);
 
   const [product, setProduct] = useState(null);
   const [liked, setLiked] = useState(false);
   const [compared, setCompared] = useState(false);
 
-  // Load all products from localStorage
+  // Load all products from storage
   const allProducts = useMemo(() => {
-    return JSON.parse(localStorage.getItem("all_products_backup") || "[]");
+    return getProducts();
   }, []);
 
   // Retrieve product & restore like/compare states
   useEffect(() => {
-    const found = allProducts.find((p) => p.id === productId);
+    const found = allProducts.find((p) => p.id === id);
     setProduct(found || null);
 
     const wl = JSON.parse(localStorage.getItem("wishlist") || "[]");
-    setLiked(wl.includes(productId));
+    setLiked(wl.some(item => item.id === id));
 
     const cmp = JSON.parse(localStorage.getItem("compare") || "[]");
-    setCompared(cmp.includes(productId));
-  }, [allProducts, productId]);
+    setCompared(cmp.some(item => item.id === id));
+  }, [allProducts, id]);
 
   // Toggle wishlist item
   const toggleLike = () => {
     let wl = JSON.parse(localStorage.getItem("wishlist") || "[]");
 
-    if (wl.includes(productId)) {
-      wl = wl.filter((x) => x !== productId);
+    const exists = wl.some(item => item.id === id);
+
+    if (exists) {
+      wl = wl.filter((item) => item.id !== id);
       setLiked(false);
     } else {
-      wl.push(productId);
+      wl.push(product);
       setLiked(true);
     }
 
     localStorage.setItem("wishlist", JSON.stringify(wl));
+    window.dispatchEvent(new Event("wishlistUpdated"));
   };
 
   // Toggle compare item
   const toggleCompare = () => {
     let cmp = JSON.parse(localStorage.getItem("compare") || "[]");
 
-    if (cmp.includes(productId)) {
-      cmp = cmp.filter((x) => x !== productId);
+    const exists = cmp.some(item => item.id === id);
+
+    if (exists) {
+      cmp = cmp.filter((item) => item.id !== id);
       setCompared(false);
     } else {
-      cmp.push(productId);
+      cmp.push(product);
       setCompared(true);
     }
 
     localStorage.setItem("compare", JSON.stringify(cmp));
+    window.dispatchEvent(new Event("compareUpdated"));
   };
 
   // If product not found
@@ -136,7 +142,7 @@ const ProductPage = () => {
               Product Description
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              This is a placeholder description.  
+              This is a placeholder description.
               Later you can add a real description from your backend or CMS.
             </p>
           </div>

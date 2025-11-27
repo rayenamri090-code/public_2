@@ -1,50 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Eye, Heart, Sliders } from "lucide-react";
-
-// --- Premium Modal ---
-const ProductModal = ({ product, onClose }) => {
-    return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-            onClick={onClose}
-        >
-            <div
-                className="bg-white p-6 rounded-2xl max-w-lg w-full shadow-xl"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <h3 className="text-3xl font-semibold tracking-wide text-gray-900 mb-3">
-                    {product.title}
-                </h3>
-
-                <p className="text-xl font-semibold text-gray-700 mb-4">
-                    DT {product.price.toFixed(2)}
-                </p>
-
-                <img
-                    src={product.images[0]}
-                    alt={product.title}
-                    className="w-full h-auto rounded-xl object-cover mb-4 shadow-sm"
-                    onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src =
-                            "https://placehold.co/600x600/f3f4f6/9ca3af?text=Product";
-                    }}
-                />
-
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                    {product.description}
-                </p>
-
-                <button
-                    onClick={onClose}
-                    className="w-full py-3 rounded-2xl bg-gray-900 text-white font-medium hover:bg-black transition"
-                >
-                    Close
-                </button>
-            </div>
-        </div>
-    );
-};
+import { useNavigate } from "react-router-dom";
+import ProductModal from "./ProductModal";
 
 // --- MAIN PREMIUM CARD ---
 const ProductCard = ({
@@ -57,6 +14,7 @@ const ProductCard = ({
     isHot,
     onClick,
 }) => {
+    const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
 
     // Like state
@@ -127,19 +85,32 @@ const ProductCard = ({
         window.dispatchEvent(new Event("compareUpdated"));
     };
 
-    // Modal product data
+    // Modal product data - matches ProductModal.js structure
     const modalProduct = {
+        image: image,
         images: [image],
         title: name,
         price: price,
         description: `Compatible with ${compatibleDevices?.join(", ") || type}.`,
+        brand: type,
+        category: type,
+        categorySlug: type?.toLowerCase().replace(/\s+/g, '-'),
+    };
+
+    // Handle card click - navigate to product page
+    const handleCardClick = () => {
+        if (onClick) {
+            onClick();
+        } else {
+            navigate(`/product/${id}`);
+        }
     };
 
     return (
         <>
             {/* CARD */}
             <div
-                onClick={onClick}
+                onClick={handleCardClick}
                 className="group w-full bg-white rounded-2xl border border-transparent hover:border-gray-200 overflow-hidden shadow-sm hover:shadow-xl cursor-pointer transition-all duration-300"
             >
                 {/* IMAGE */}

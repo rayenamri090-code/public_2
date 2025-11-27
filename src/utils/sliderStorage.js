@@ -52,9 +52,7 @@ export const saveSlider = (slider) => {
 
 export const updateSlider = (updatedSlider) => {
     const sliders = getSliders();
-    const index = sliders.findIndex((s) => s.id === updatedSlider.id);
-    // Wait, I should fix the typo in the code I'm about to write.
-    const newSliders = sliders.map(s => s.id === updatedSlider.id ? updatedSlider : s);
+    const newSliders = sliders.map((s) => s.id === updatedSlider.id ? updatedSlider : s);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newSliders));
     return updatedSlider;
 };
@@ -67,5 +65,5 @@ export const deleteSlider = (id) => {
 };
 
 export const initializeSliders = () => {
-    getSliders(); // This will trigger the default set if empty
+    getSliders();
 }
