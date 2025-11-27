@@ -20,6 +20,7 @@ import LikedProduct from "./pages/LikedProduct";
 import NotFound from "./pages/NotFound";
 
 import CategoryPage from "./pages/CategoryPage";
+import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import FAQ from "./pages/FAQ"; // <-- import FAQ
 import Shipping from "./pages/Shipping"; // <-- import Shipping
@@ -55,6 +56,7 @@ const AppContent = () => {
           <Route path="/admin" element={<AdminPage />} />
 
           {/* Privacy & FAQ */}
+          <Route path="/about" element={<About />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/shipping" element={<Shipping />} />
