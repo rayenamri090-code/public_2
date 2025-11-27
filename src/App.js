@@ -18,8 +18,10 @@ import Compare from "./pages/Compare";
 import LikedProduct from "./pages/LikedProduct";
 import NotFound from "./pages/NotFound";
 
-// NEW: CategoryPage import
 import CategoryPage from "./pages/CategoryPage";
+
+// ✅ NEW: Privacy Page Import
+import Privacy from "./pages/Privacy";
 
 const AppContent = () => {
   const location = useLocation();
@@ -62,6 +64,9 @@ const AppContent = () => {
           {/* Admin */}
           <Route path="/admin" element={<AdminPage />} />
 
+          {/* ✅ Privacy Page */}
+          <Route path="/privacy" element={<Privacy />} />
+
           {/* Fallback */}
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -69,7 +74,6 @@ const AppContent = () => {
 
       {/* Footer */}
       {!isAdminRoute && <Footer />}
-
     </div>
   );
 };

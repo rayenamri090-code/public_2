@@ -14,12 +14,12 @@ const Footer = () => {
         </Link>
 
         {/* Links */}
-        <div className="flex gap-4 text-xs">
-          <button className="hover:text-white">About</button>
-          <button className="hover:text-white">Privacy</button>
-          <button className="hover:text-white">Shipping</button>
-          <button className="hover:text-white">FAQ</button>
-        </div>
+        <nav className="flex gap-4 text-xs">
+          <Link to="/about" className="hover:text-white">About</Link>
+          <Link to="/privacy" className="hover:text-white">Privacy</Link>
+          <Link to="/shipping" className="hover:text-white">Shipping</Link>
+          <Link to="/faq" className="hover:text-white">FAQ</Link>
+        </nav>
 
         {/* Copyright */}
         <p className="text-xs text-gray-500">© 2025 BlackWave</p>
