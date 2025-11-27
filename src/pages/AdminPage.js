@@ -2,15 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, LogOut, Image, List, Package, Handshake, UserPlus } from 'lucide-react';
 import AddAdmin from '../myComponents/admin/AddAdmin';
 import LoginPage from '../myComponents/AdminLogin';
+import EditSlider from '../myComponents/admin/EditSlider';
+import SliderList from '../myComponents/admin/SliderList';
 import AddSlider from '../myComponents/admin/AddSlider';
 import AddCategory from '../myComponents/admin/AddCategory';
+import EditCategory from '../myComponents/admin/EditCategory';
+import CategoryList from '../myComponents/admin/CategoryList';
 import AddProduct from '../myComponents/admin/AddProduct';
+import EditProduct from '../myComponents/admin/EditProduct';
+import ProductList from '../myComponents/admin/ProductList';
 import AddSponsor from '../myComponents/admin/AddSponsor';
-
 
 const AdminDashboard = () => {
   const [isLogged, setIsLogged] = useState(false);
   const [activeForm, setActiveForm] = useState('slider');
+  const [sliderView, setSliderView] = useState('list'); // list, add, edit
+  const [editingSlider, setEditingSlider] = useState(null);
+  const [categoryView, setCategoryView] = useState('list'); // list, add, edit
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [productView, setProductView] = useState('list'); // list, add, edit
+  const [editingProduct, setEditingProduct] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Check token on load
@@ -33,14 +44,76 @@ const AdminDashboard = () => {
     { key: 'product', label: 'New Inventory', icon: Package },
     { key: 'sponsor', label: 'Brand Sponsors', icon: Handshake },
     { key: 'admin', label: 'Add Admin', icon: UserPlus },
-
   ];
 
   const renderActiveForm = () => {
     switch (activeForm) {
-      case 'slider': return <AddSlider />;
-      case 'category': return <AddCategory />;
-      case 'product': return <AddProduct />;
+      case 'slider':
+        if (sliderView === 'add') {
+          return <AddSlider onCancel={() => setSliderView('list')} onSave={() => setSliderView('list')} />;
+        }
+        if (sliderView === 'edit') {
+          return (
+            <EditSlider
+              slider={editingSlider}
+              onCancel={() => setSliderView('list')}
+              onSave={() => setSliderView('list')}
+            />
+          );
+        }
+        return (
+          <SliderList
+            onAdd={() => setSliderView('add')}
+            onEdit={(slider) => {
+              setEditingSlider(slider);
+              setSliderView('edit');
+            }}
+          />
+        );
+      case 'category':
+        if (categoryView === 'add') {
+          return <AddCategory onCancel={() => setCategoryView('list')} onSave={() => setCategoryView('list')} />;
+        }
+        if (categoryView === 'edit') {
+          return (
+            <EditCategory
+              category={editingCategory}
+              onCancel={() => setCategoryView('list')}
+              onSave={() => setCategoryView('list')}
+            />
+          );
+        }
+        return (
+          <CategoryList
+            onAdd={() => setCategoryView('add')}
+            onEdit={(category) => {
+              setEditingCategory(category);
+              setCategoryView('edit');
+            }}
+          />
+        );
+      case 'product':
+        if (productView === 'add') {
+          return <AddProduct onCancel={() => setProductView('list')} onSave={() => setProductView('list')} />;
+        }
+        if (productView === 'edit') {
+          return (
+            <EditProduct
+              product={editingProduct}
+              onCancel={() => setProductView('list')}
+              onSave={() => setProductView('list')}
+            />
+          );
+        }
+        return (
+          <ProductList
+            onAdd={() => setProductView('add')}
+            onEdit={(product) => {
+              setEditingProduct(product);
+              setProductView('edit');
+            }}
+          />
+        );
       case 'sponsor': return <AddSponsor />;
       case 'admin': return <AddAdmin />;
 
@@ -61,9 +134,8 @@ const AdminDashboard = () => {
         {navItems.map(item => (
           <button
             key={item.key}
-            className={`flex items-center w-full text-left p-4 rounded-xl transition duration-300 ${
-              activeForm === item.key ? 'bg-blue-700 text-white shadow-lg shadow-blue-800/30' : 'text-gray-300 hover:bg-gray-800 hover:text-blue-400'
-            }`}
+            className={`flex items-center w-full text-left p-4 rounded-xl transition duration-300 ${activeForm === item.key ? 'bg-blue-700 text-white shadow-lg shadow-blue-800/30' : 'text-gray-300 hover:bg-gray-800 hover:text-blue-400'
+              }`}
             onClick={() => { setActiveForm(item.key); setIsSidebarOpen(false); }}
           >
             <item.icon className="w-5 h-5 mr-3" />
