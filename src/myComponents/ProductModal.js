@@ -94,14 +94,14 @@ const ProductModal = ({ product, onClose }) => {
               </button>
             </div>
 
-            {/* Add to Cart */}
+            {/* Contact Us */}
             <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-md transition">
-              ADD TO CART
+              CONTACT US
             </button>
 
-            {/* Buy Now */}
+            {/* Request Info */}
             <button className="bg-black hover:bg-gray-900 text-white font-semibold px-6 py-3 rounded-md transition">
-              BUY NOW
+              REQUEST INFO
             </button>
           </div>
         </div>

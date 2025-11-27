@@ -17,24 +17,28 @@ const ProductPage = () => {
 
   // Retrieve product & restore like/compare states
   useEffect(() => {
-    const found = allProducts.find((p) => p.id === id);
+    console.log('Looking for product with ID:', id);
+    console.log('All products:', allProducts);
+
+    const found = allProducts.find((p) => String(p.id) === String(id));
+    console.log('Found product:', found);
     setProduct(found || null);
 
     const wl = JSON.parse(localStorage.getItem("wishlist") || "[]");
-    setLiked(wl.some(item => item.id === id));
+    setLiked(wl.some(item => String(item.id) === String(id)));
 
     const cmp = JSON.parse(localStorage.getItem("compare") || "[]");
-    setCompared(cmp.some(item => item.id === id));
+    setCompared(cmp.some(item => String(item.id) === String(id)));
   }, [allProducts, id]);
 
   // Toggle wishlist item
   const toggleLike = () => {
     let wl = JSON.parse(localStorage.getItem("wishlist") || "[]");
 
-    const exists = wl.some(item => item.id === id);
+    const exists = wl.some(item => String(item.id) === String(id));
 
     if (exists) {
-      wl = wl.filter((item) => item.id !== id);
+      wl = wl.filter((item) => String(item.id) !== String(id));
       setLiked(false);
     } else {
       wl.push(product);
@@ -49,10 +53,10 @@ const ProductPage = () => {
   const toggleCompare = () => {
     let cmp = JSON.parse(localStorage.getItem("compare") || "[]");
 
-    const exists = cmp.some(item => item.id === id);
+    const exists = cmp.some(item => String(item.id) === String(id));
 
     if (exists) {
-      cmp = cmp.filter((item) => item.id !== id);
+      cmp = cmp.filter((item) => String(item.id) !== String(id));
       setCompared(false);
     } else {
       cmp.push(product);
@@ -67,7 +71,11 @@ const ProductPage = () => {
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600 text-xl">
-        Product not found.
+        <div className="text-center">
+          <p className="text-2xl font-bold mb-2">Product not found</p>
+          <p className="text-sm text-gray-500">ID: {id}</p>
+          <p className="text-xs text-gray-400 mt-4">Available products: {allProducts.length}</p>
+        </div>
       </div>
     );
   }
@@ -79,9 +87,13 @@ const ProductPage = () => {
         {/* LEFT — Product Image */}
         <div className="flex items-center justify-center">
           <img
-            src={product.image}
-            alt={product.name}
+            src={product.image || product.images?.[0] || "https://placehold.co/600x600/f3f4f6/9ca3af?text=Product"}
+            alt={product.name || product.title || "Product"}
             className="w-full max-w-md rounded-3xl shadow-xl"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "https://placehold.co/600x600/f3f4f6/9ca3af?text=Product";
+            }}
           />
         </div>
 
@@ -89,28 +101,44 @@ const ProductPage = () => {
         <div>
           {/* Title */}
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            {product.name}
+            {product.name || product.title || "Untitled Product"}
           </h1>
+
+          {/* Type/Category */}
+          {product.type && (
+            <p className="text-sm text-gray-500 mb-2">
+              Category: {product.type}
+            </p>
+          )}
+
+          {/* Compatible Devices */}
+          {product.compatibleDevices && product.compatibleDevices.length > 0 && (
+            <p className="text-sm text-gray-600 mb-4">
+              Compatible: {product.compatibleDevices.join(", ")}
+            </p>
+          )}
 
           {/* Price */}
           <p className="text-2xl font-semibold text-blue-700 mb-4">
-            {product.price} TD
+            {product.price ? `${product.price.toFixed(2)} DT` : "Price not available"}
           </p>
 
           {/* Rating */}
-          <div className="flex items-center mb-6 text-yellow-500 text-lg">
-            {"★".repeat(product.rating)}
-            <span className="text-gray-300 ml-1">
-              {"★".repeat(5 - product.rating)}
-            </span>
-          </div>
+          {product.rating && (
+            <div className="flex items-center mb-6 text-yellow-500 text-lg">
+              {"★".repeat(product.rating)}
+              <span className="text-gray-300 ml-1">
+                {"★".repeat(5 - product.rating)}
+              </span>
+            </div>
+          )}
 
           {/* Buttons */}
           <div className="flex items-center gap-4 mb-10">
-            {/* Add to cart */}
+            {/* Contact Us */}
             <button className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl text-lg font-semibold hover:bg-gray-800 transition">
               <ShoppingCart size={20} />
-              Add to Cart
+              Contact Us
             </button>
 
             {/* Like */}
@@ -142,8 +170,7 @@ const ProductPage = () => {
               Product Description
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              This is a placeholder description.
-              Later you can add a real description from your backend or CMS.
+              {product.description || `High-quality ${product.type || 'product'} compatible with ${product.compatibleDevices?.join(", ") || "various devices"}.`}
             </p>
           </div>
 
@@ -154,3 +181,4 @@ const ProductPage = () => {
 };
 
 export default ProductPage;
+
