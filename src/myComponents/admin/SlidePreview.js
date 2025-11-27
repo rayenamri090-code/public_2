@@ -27,12 +27,18 @@ const SlidePreview = ({ slide }) => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105">
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
+                title={`Link: ${slide.button1Link || '#'}`}
+              >
                 <ShoppingCart size={20} />
                 {slide.button1 || 'Button 1'}
               </button>
 
-              <button className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105">
+              <button
+                className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
+                title={`Link: ${slide.button2Link || '#'}`}
+              >
                 {slide.button2 || 'Button 2'}
                 <ArrowRight size={20} />
               </button>

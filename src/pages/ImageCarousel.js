@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight, ShoppingCart, ArrowRight } from "lucide-react";
+import { getAllSliders } from "../services/sliderService";
 
 const ImageCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -13,9 +14,15 @@ const ImageCarousel = () => {
   const [slides, setSlides] = useState([]);
 
   useEffect(() => {
-    import("../utils/sliderStorage").then(({ getSliders }) => {
-      setSlides(getSliders());
-    });
+    const fetchSlides = async () => {
+      try {
+        const data = await getAllSliders();
+        setSlides(data);
+      } catch (error) {
+        console.error("Error fetching slides:", error);
+      }
+    };
+    fetchSlides();
   }, []);
 
   const nextSlide = useCallback(() => {
@@ -106,14 +113,20 @@ const ImageCarousel = () => {
                     {slide.description}
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105">
+                    <a
+                      href={slide.button1Link}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
+                    >
                       <ShoppingCart size={20} />
                       {slide.button1}
-                    </button>
-                    <button className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105">
+                    </a>
+                    <a
+                      href={slide.button2Link}
+                      className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105"
+                    >
                       {slide.button2}
                       <ArrowRight size={20} />
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -146,8 +159,8 @@ const ImageCarousel = () => {
             key={index}
             onClick={() => setCurrentSlide(index)}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentSlide
-                ? "bg-white scale-110"
-                : "bg-white bg-opacity-50"
+              ? "bg-white scale-110"
+              : "bg-white bg-opacity-50"
               }`}
             aria-label={`Go to slide ${index + 1}`}
           />

@@ -4,7 +4,7 @@ import FormCard from './FormCardSlider';
 import SlidePreview from './SlidePreview';
 import PreviewModal from './PreviewModalSlider';
 
-import { saveSlider } from '../../utils/sliderStorage';
+import { createSlider } from '../../services/sliderService';
 
 const AddSlider = ({ onCancel, onSave }) => {
   const [data, setData] = useState({
@@ -13,6 +13,8 @@ const AddSlider = ({ onCancel, onSave }) => {
     description: '',
     button1: '',
     button2: '',
+    button1Link: '',
+    button2Link: '',
   });
 
   const [showPreview, setShowPreview] = useState(false);
@@ -22,21 +24,28 @@ const AddSlider = ({ onCancel, onSave }) => {
     setData({ ...data, [name]: value });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!data.image || !data.title) {
       alert('Please fill in at least the Image URL and Title.');
       return;
     }
-    saveSlider(data);
-    alert('Slider Added Successfully!');
-    if (onSave) onSave();
-    setData({
-      image: '',
-      title: '',
-      description: '',
-      button1: '',
-      button2: '',
-    });
+    try {
+      await createSlider(data);
+      alert('Slider Added Successfully!');
+      if (onSave) onSave();
+      setData({
+        image: '',
+        title: '',
+        description: '',
+        button1: '',
+        button2: '',
+        button1Link: '',
+        button2Link: '',
+      });
+    } catch (error) {
+      console.error("Error adding slider:", error);
+      alert('Failed to add slider. Please try again.');
+    }
   };
 
   return (
@@ -82,9 +91,25 @@ const AddSlider = ({ onCancel, onSave }) => {
         />
 
         <input
+          name="button1Link"
+          placeholder="Button 1 Link (e.g., /shop)"
+          value={data.button1Link}
+          onChange={handleChange}
+          className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none transition-colors"
+        />
+
+        <input
           name="button2"
           placeholder="Button 2 Text (e.g., READ MORE)"
           value={data.button2}
+          onChange={handleChange}
+          className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none transition-colors"
+        />
+
+        <input
+          name="button2Link"
+          placeholder="Button 2 Link (e.g., /about)"
+          value={data.button2Link}
           onChange={handleChange}
           className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none transition-colors"
         />

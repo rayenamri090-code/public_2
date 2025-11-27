@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Edit, Trash2, Plus, Image as ImageIcon, Eye } from 'lucide-react';
-import { getSliders, deleteSlider } from '../../utils/sliderStorage';
+import { getAllSliders, deleteSlider } from '../../services/sliderService';
 import ConfirmationModal from './ConfirmationModal';
 import PreviewModal from './PreviewModalSlider';
 import SlidePreview from './SlidePreview';
@@ -12,8 +12,17 @@ const SliderList = ({ onEdit, onAdd }) => {
     const [showPreview, setShowPreview] = useState(false);
     const [previewSlider, setPreviewSlider] = useState(null);
 
+    const fetchSliders = async () => {
+        try {
+            const data = await getAllSliders();
+            setSliders(data);
+        } catch (error) {
+            console.error("Error fetching sliders:", error);
+        }
+    };
+
     useEffect(() => {
-        setSliders(getSliders());
+        fetchSliders();
     }, []);
 
     const handleDelete = (id) => {
@@ -21,11 +30,16 @@ const SliderList = ({ onEdit, onAdd }) => {
         setShowDeleteConfirm(true);
     };
 
-    const confirmDelete = () => {
+    const confirmDelete = async () => {
         if (sliderToDelete) {
-            const updatedSliders = deleteSlider(sliderToDelete);
-            setSliders(updatedSliders);
-            setSliderToDelete(null);
+            try {
+                await deleteSlider(sliderToDelete);
+                fetchSliders(); // Refresh list after delete
+                setSliderToDelete(null);
+            } catch (error) {
+                console.error("Error deleting slider:", error);
+                alert("Failed to delete slider.");
+            }
         }
     };
 
@@ -53,7 +67,7 @@ const SliderList = ({ onEdit, onAdd }) => {
             <div className="grid gap-4">
                 {sliders.map((slider) => (
                     <div
-                        key={slider.id}
+                        key={slider._id}
                         className="bg-gray-800 p-4 rounded-lg flex items-center justify-between border border-gray-700 hover:border-blue-500/50 transition-colors"
                     >
                         <div className="flex items-center space-x-4">
@@ -83,7 +97,7 @@ const SliderList = ({ onEdit, onAdd }) => {
                                 <Edit className="w-5 h-5" />
                             </button>
                             <button
-                                onClick={() => handleDelete(slider.id)}
+                                onClick={() => handleDelete(slider._id)}
                                 className="p-2 text-red-400 hover:bg-red-900/30 rounded-lg transition-colors"
                                 title="Delete"
                             >
