@@ -1,3 +1,4 @@
+// src/App.js
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
@@ -19,9 +20,8 @@ import LikedProduct from "./pages/LikedProduct";
 import NotFound from "./pages/NotFound";
 
 import CategoryPage from "./pages/CategoryPage";
-
-// ✅ NEW: Privacy Page Import
 import Privacy from "./pages/Privacy";
+import FAQ from "./pages/FAQ"; // <-- import FAQ
 
 const AppContent = () => {
   const location = useLocation();
@@ -29,14 +29,10 @@ const AppContent = () => {
 
   return (
     <div className="App flex flex-col min-h-screen">
-
-      {/* Navbar */}
       {!isAdminRoute && <Navbar />}
 
-      {/* MAIN CONTENT */}
       <div className="flex-1">
         <Routes>
-          {/* Home Page */}
           <Route
             path="/"
             element={
@@ -51,28 +47,20 @@ const AppContent = () => {
             }
           />
 
-          {/* Product Page */}
           <Route path="/product/:id" element={<ProductPage />} />
-
-          {/* Wishlist & Compare */}
           <Route path="/wishlist" element={<LikedProduct />} />
           <Route path="/compare" element={<Compare />} />
-
-          {/* Category Page */}
           <Route path="/shop/category/:slug" element={<CategoryPage />} />
-
-          {/* Admin */}
           <Route path="/admin" element={<AdminPage />} />
 
-          {/* ✅ Privacy Page */}
+          {/* Privacy & FAQ */}
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/faq" element={<FAQ />} />
 
-          {/* Fallback */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
 
-      {/* Footer */}
       {!isAdminRoute && <Footer />}
     </div>
   );
