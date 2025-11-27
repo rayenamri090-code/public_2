@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 const ProductModal = ({ product, onClose }) => {
-  const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "blue");
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
 
-  const colors = product.colors || ["black", "blue", "green", "yellow"];
+  const handleCategoryClick = () => {
+    if (product.categorySlug) {
+      navigate(`/shop/category/${product.categorySlug}`);
+      onClose();
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
@@ -47,29 +53,20 @@ const ProductModal = ({ product, onClose }) => {
             </div>
 
             {/* Description */}
-            <p className="text-gray-600 text-sm leading-relaxed mb-8">
+            <p className="text-gray-600 text-sm leading-relaxed mb-4">
               {product.description ||
-                "Authorities in our business will tell in no uncertain terms that Lorem Ipsum is that huge, huge no no to forswear forever. Not so fast, I’d say, there are some redeeming factors in favor of greeking text, as its use is merely the symptom of a worse problem to take into consideration."}
+                "No description available."}
             </p>
 
-            {/* Color Selector */}
-            <div className="mb-6">
-              <p className="text-sm font-medium text-gray-800 mb-2">Color :</p>
-              <div className="flex gap-3">
-                {colors.map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => setSelectedColor(color)}
-                    className={`w-8 h-8 rounded-md border-2 transition-all duration-200 ${
-                      selectedColor === color
-                        ? "border-blue-600"
-                        : "border-gray-300 hover:border-gray-500"
-                    }`}
-                    style={{ backgroundColor: color }}
-                  />
-                ))}
-              </div>
-            </div>
+            {/* Category Link */}
+            {product.category && product.categorySlug && (
+              <p
+                onClick={handleCategoryClick}
+                className="text-blue-600 font-semibold cursor-pointer hover:underline mb-6"
+              >
+                Category: {product.category}
+              </p>
+            )}
 
             {/* Stock */}
             <div className="text-sm text-gray-700 mb-6">

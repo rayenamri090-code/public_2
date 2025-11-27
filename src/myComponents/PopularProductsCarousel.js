@@ -2,76 +2,55 @@ import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductModal from "../myComponents/ProductModal";
 
-const products = [
-  {
-    id: 1,
-    name: "iPhone 12 Pro Moment Case - Blue",
-    price: 149.0,
-    image:
-      "https://png.pngtree.com/png-clipart/20210309/original/pngtree-vertical-smartphone-with-transparent-wide-display-png-image_5897986.jpg",
-    type: "CASES",
-  },
-  {
-    id: 2,
-    name: "iPhone Leather Wallet Black",
-    price: 199.0,
-    image:
-      "https://w1.pngwing.com/pngs/8/703/png-transparent-iphone-x-apple-iphone-xs-max-iphone-5s-smartphone-book-scanner-telephone-mobile-phones-mobile-phone-case-mobile-phone-accessories-thumbnail.png",
-    type: "WALLET",
-  },
-  {
-    id: 3,
-    name: "Everyday Leather Strap – Olive",
-    price: 199.0,
-    image:
-      "https://w1.pngwing.com/pngs/8/703/png-transparent-iphone-x-apple-iphone-xs-max-iphone-5s-smartphone-book-scanner-telephone-mobile-phones-mobile-phone-case-mobile-phone-accessories-thumbnail.png",
-    type: "WATCH BAND",
-  },
-  {
-    id: 4,
-    name: "Case for AirPods – Blue",
-    price: 9.99,
-    image: "https://w7.pngwing.com/pngs/853/608/png-transparent-airpods.png",
-    type: "CASES",
-  },
+// All products (you can keep more items here if needed)
+const allProducts = [
+  { id: 1, name: "Earphones", price: 59.99, image: "https://via.placeholder.com/150", category: "Earphones", categorySlug: "earphones" },
+  { id: 2, name: "Glass Protectoion", price: 14.99, image: "https://via.placeholder.com/150", category: "glass-protection", categorySlug: "glass-protection" },
+  { id: 3, name: "Charger", price: 29.99, image: "https://via.placeholder.com/150", category: "Chargers", categorySlug: "chargers" },
+  { id: 4, name: "Cables", price: 19.99, image: "https://via.placeholder.com/150", category: "Cables", categorySlug: "cables" },
+  { id: 5, name: "Car Charger", price: 24.99, image: "https://via.placeholder.com/150", category: "Chargers", categorySlug: "chargers" },
 ];
 
+// Only show these categories
+const allowedCategories = ["Earphones", "glass-protection", "Chargers", "Cables", "Car Charger"];
+
 export default function PopularProductsCarousel() {
+  const [products, setProducts] = useState([]);
   const [itemsPerSlide, setItemsPerSlide] = useState(3);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transitionEnabled, setTransitionEnabled] = useState(true);
-
-  // ★ STATE FOR PRODUCT MODAL
   const [selectedProduct, setSelectedProduct] = useState(null);
-
-  // Dragging
   const dragStart = useRef(null);
+
+  // Filter products on mount
+  useEffect(() => {
+    const filtered = allProducts.filter(p => allowedCategories.includes(p.category));
+    setProducts(filtered);
+  }, []);
 
   // Responsive items per slide
   useEffect(() => {
     const update = () => {
       if (window.innerWidth < 640) setItemsPerSlide(1);
-      else if (window.innerWidth < 1024) setItemsPerSlide(3);
-      else setItemsPerSlide(5);
+      else setItemsPerSlide(3);
     };
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // Infinite loop duplication
-  const extended = [
-    ...products.slice(-itemsPerSlide),
-    ...products,
-    ...products.slice(0, itemsPerSlide),
-  ];
+  const shouldLoop = products.length > itemsPerSlide;
 
-  const realStart = itemsPerSlide;
-  const realEnd = extended.length - itemsPerSlide;
+  const extended = shouldLoop
+    ? [...products.slice(-itemsPerSlide), ...products, ...products.slice(0, itemsPerSlide)]
+    : [...products];
+
+  const realStart = shouldLoop ? itemsPerSlide : 0;
+  const realEnd = shouldLoop ? extended.length - itemsPerSlide : products.length;
 
   useEffect(() => {
     setCurrentIndex(realStart);
-  }, [itemsPerSlide]);
+  }, [itemsPerSlide, realStart, products.length]);
 
   const goTo = (index) => {
     setTransitionEnabled(true);
@@ -81,8 +60,8 @@ export default function PopularProductsCarousel() {
   const handlePrev = () => goTo(currentIndex - 1);
   const handleNext = () => goTo(currentIndex + 1);
 
-  // Infinite loop reset
   useEffect(() => {
+    if (!shouldLoop) return;
     if (currentIndex === realEnd) {
       setTimeout(() => {
         setTransitionEnabled(false);
@@ -94,9 +73,15 @@ export default function PopularProductsCarousel() {
         setCurrentIndex(realEnd - 1);
       }, 300);
     }
-  }, [currentIndex]);
+  }, [currentIndex, realEnd, realStart, shouldLoop]);
 
-  // Drag handlers
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex(prev => prev + 1);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleDown = (e) => {
     dragStart.current = e.clientX || e.touches[0].clientX;
   };
@@ -105,10 +90,8 @@ export default function PopularProductsCarousel() {
     if (!dragStart.current) return;
     const endX = e.clientX || e.changedTouches[0].clientX;
     const diff = endX - dragStart.current;
-
     if (diff > 60) handlePrev();
     else if (diff < -60) handleNext();
-
     dragStart.current = null;
   };
 
@@ -128,14 +111,10 @@ export default function PopularProductsCarousel() {
           onTouchEnd={handleUp}
         >
           <div
-            className={`flex ${
-              transitionEnabled ? "transition-transform duration-300" : ""
-            }`}
+            className={`flex ${transitionEnabled ? "transition-transform duration-300" : ""}`}
             style={{
               width: `${(extended.length / itemsPerSlide) * 100}%`,
-              transform: `translateX(-${
-                (currentIndex * 100) / extended.length
-              }%)`,
+              transform: `translateX(-${(currentIndex * 100) / extended.length}%)`,
             }}
           >
             {extended.map((p, i) => (
@@ -143,57 +122,56 @@ export default function PopularProductsCarousel() {
                 key={i}
                 className="p-3 flex-shrink-0 cursor-pointer"
                 style={{ width: `${100 / extended.length}%` }}
-                onClick={() => setSelectedProduct(p)} // ★ OPEN MODAL
+                onClick={() => setSelectedProduct(p)}
               >
-                <div className="bg-white rounded-xl shadow-lg border p-5 group">
+                <div className="bg-white rounded-xl shadow-lg border p-5 group h-full flex flex-col">
                   <img
                     src={p.image}
                     alt={p.name}
-                    className="h-32 mx-auto object-contain group-hover:scale-105 transition-transform"
+                    className="h-32 mx-auto object-contain group-hover:scale-105 transition-transform mb-4"
                   />
-
-                  <h3 className="mt-4 text-sm font-semibold text-gray-900 line-clamp-1">
-                    {p.name}
-                  </h3>
-
-                  <p className="text-xs text-gray-500 uppercase tracking-widest">
-                    {p.type}
-                  </p>
-
-                  <div className="flex items-end justify-center mt-2">
-                    <span className="text-base font-semibold text-gray-600 mr-0.5">
-                      DT
-                    </span>
-                    <span className="text-lg font-bold text-gray-900">
-                      {p.price.toFixed(2)}
-                    </span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 mb-1">{p.name}</h3>
+                  <p className="text-xs text-gray-500 uppercase tracking-widest mb-2">{p.category}</p>
+                  <div className="flex items-end justify-center mt-auto">
+                    <span className="text-base font-semibold text-gray-600 mr-0.5">DT</span>
+                    <span className="text-lg font-bold text-gray-900">{p.price.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Arrows */}
-          <button
-            onClick={handlePrev}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow border"
-          >
-            <ChevronLeft />
-          </button>
+          {shouldLoop && (
+            <>
+              <button
+                onClick={handlePrev}
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow border"
+              >
+                <ChevronLeft />
+              </button>
 
-          <button
-            onClick={handleNext}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow border"
-          >
-            <ChevronRight />
-          </button>
+              <button
+                onClick={handleNext}
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow border"
+              >
+                <ChevronRight />
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      {/* ★ PRODUCT MODAL */}
       {selectedProduct && (
         <ProductModal
-          product={selectedProduct}
+          product={{
+            image: selectedProduct.image,
+            title: selectedProduct.name,
+            category: selectedProduct.category,
+            price: selectedProduct.price,
+            description: `This is a ${selectedProduct.category} product.`,
+            categorySlug: selectedProduct.categorySlug,
+            stock: 50,
+          }}
           onClose={() => setSelectedProduct(null)}
         />
       )}
