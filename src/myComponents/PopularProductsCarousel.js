@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import ProductModal from "../myComponents/ProductModal";
 
 const products = [
   {
@@ -33,208 +34,140 @@ const products = [
     image: "https://w7.pngwing.com/pngs/853/608/png-transparent-airpods.png",
     type: "CASES",
   },
-  {
-    id: 5,
-    name: "iPhone 13 Case – Smokey Black",
-    price: 169.0,
-    image: "https://w7.pngwing.com/pngs/853/608/png-transparent-airpods.png",
-    type: "CASES",
-  },
-  {
-    id: 6,
-    name: "Lightning Cable USB-A",
-    price: 25.0,
-    image: "https://w7.pngwing.com/pngs/853/608/png-transparent-airpods.png",
-    type: "ACCESSORIES",
-  },
-  {
-    id: 7,
-    name: "Wireless Charger Stand",
-    price: 39.99,
-    image:
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    type: "ACCESSORIES",
-  },
-  {
-    id: 8,
-    name: "Apple Watch Sport Band",
-    price: 49.99,
-    image:
-      "https://images.unsplash.com/photo-1549924231-f129b911e442?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    type: "WATCH BAND",
-  },
-  {
-    id: 9,
-    name: "USB-C to Lightning Cable",
-    price: 19.99,
-    image:
-      "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    type: "ACCESSORIES",
-  },
 ];
 
 export default function PopularProductsCarousel() {
   const [itemsPerSlide, setItemsPerSlide] = useState(3);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const containerRef = useRef(null);
-  const transitionRef = useRef(null);
+  const [transitionEnabled, setTransitionEnabled] = useState(true);
 
-  // Drag states and refs
-  const [isDragging, setIsDragging] = useState(false);
-  const dragStartX = useRef(0);
-  const dragDeltaX = useRef(0);
+  // ★ STATE FOR PRODUCT MODAL
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // 1. Set responsive itemsPerSlide
+  // Dragging
+  const dragStart = useRef(null);
+
+  // Responsive items per slide
   useEffect(() => {
     const update = () => {
-      if (window.innerWidth < 640) {
-        setItemsPerSlide(1);
-      } else if (window.innerWidth < 1024) {
-        setItemsPerSlide(3);
-      } else {
-        setItemsPerSlide(5);
-      }
+      if (window.innerWidth < 640) setItemsPerSlide(1);
+      else if (window.innerWidth < 1024) setItemsPerSlide(3);
+      else setItemsPerSlide(5);
     };
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // 2. Clone slides for infinite looping
-  const extendedProducts = [
+  // Infinite loop duplication
+  const extended = [
     ...products.slice(-itemsPerSlide),
     ...products,
     ...products.slice(0, itemsPerSlide),
   ];
 
-  const realIndexStart = itemsPerSlide;
-  const realIndexEnd = extendedProducts.length - itemsPerSlide;
+  const realStart = itemsPerSlide;
+  const realEnd = extended.length - itemsPerSlide;
 
-  // 3. Initialize currentIndex in middle (real start)
   useEffect(() => {
-    setCurrentIndex(itemsPerSlide);
+    setCurrentIndex(realStart);
   }, [itemsPerSlide]);
 
-  // 4. Loop seamlessly by resetting index after transition
+  const goTo = (index) => {
+    setTransitionEnabled(true);
+    setCurrentIndex(index);
+  };
+
+  const handlePrev = () => goTo(currentIndex - 1);
+  const handleNext = () => goTo(currentIndex + 1);
+
+  // Infinite loop reset
   useEffect(() => {
-    if (isTransitioning) {
-      transitionRef.current = setTimeout(() => {
-        setIsTransitioning(false);
-        if (currentIndex >= realIndexEnd) {
-          setCurrentIndex(itemsPerSlide); // reset to real start
-        } else if (currentIndex < realIndexStart) {
-          setCurrentIndex(realIndexEnd - 1); // reset to real end
-        }
-      }, 300); // transition duration must match CSS
+    if (currentIndex === realEnd) {
+      setTimeout(() => {
+        setTransitionEnabled(false);
+        setCurrentIndex(realStart);
+      }, 300);
+    } else if (currentIndex === realStart - 1) {
+      setTimeout(() => {
+        setTransitionEnabled(false);
+        setCurrentIndex(realEnd - 1);
+      }, 300);
     }
-    return () => clearTimeout(transitionRef.current);
-  }, [currentIndex, isTransitioning, realIndexStart, realIndexEnd, itemsPerSlide]);
-
-  const handlePrev = () => {
-    setIsTransitioning(true);
-    setCurrentIndex((prev) => prev - 1);
-  };
-
-  const handleNext = () => {
-    setIsTransitioning(true);
-    setCurrentIndex((prev) => prev + 1);
-  };
+  }, [currentIndex]);
 
   // Drag handlers
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    dragStartX.current = e.clientX;
+  const handleDown = (e) => {
+    dragStart.current = e.clientX || e.touches[0].clientX;
   };
 
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    dragDeltaX.current = e.clientX - dragStartX.current;
-  };
+  const handleUp = (e) => {
+    if (!dragStart.current) return;
+    const endX = e.clientX || e.changedTouches[0].clientX;
+    const diff = endX - dragStart.current;
 
-  const handleMouseUp = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    const threshold = 50; // minimum pixels to trigger slide change
-    if (dragDeltaX.current > threshold) {
-      handlePrev();
-    } else if (dragDeltaX.current < -threshold) {
-      handleNext();
-    }
-    dragDeltaX.current = 0;
+    if (diff > 60) handlePrev();
+    else if (diff < -60) handleNext();
+
+    dragStart.current = null;
   };
 
   return (
     <section className="py-12 bg-white font-sans">
       <div className="max-w-7xl mx-auto px-6 text-center">
-        {/* Updated Header for Chic Look */}
         <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 pb-2 border-b-2 border-blue-700/50 inline-block px-4">
           Most Popular Products
         </h2>
-        <p className="text-gray-500 mt-2 text-sm md:text-base">
-          Proponents of content strategy may shun dummy copy designers
-        </p>
 
         <div
           className="relative mt-10 overflow-hidden select-none"
-          ref={containerRef}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          // Touch events for mobile compatibility
-          onTouchStart={(e) => handleMouseDown(e.touches[0])}
-          onTouchMove={(e) => handleMouseMove(e.touches[0])}
-          onTouchEnd={handleMouseUp}
+          onMouseDown={handleDown}
+          onMouseUp={handleUp}
+          onMouseLeave={handleUp}
+          onTouchStart={handleDown}
+          onTouchEnd={handleUp}
         >
           <div
             className={`flex ${
-              isTransitioning ? "transition-transform duration-300 ease-in-out" : ""
+              transitionEnabled ? "transition-transform duration-300" : ""
             }`}
             style={{
-              width: `${(extendedProducts.length * 100) / itemsPerSlide}%`,
+              width: `${(extended.length / itemsPerSlide) * 100}%`,
               transform: `translateX(-${
-                (currentIndex * 100) / extendedProducts.length
+                (currentIndex * 100) / extended.length
               }%)`,
             }}
           >
-            {extendedProducts.map((product, index) => (
+            {extended.map((p, i) => (
               <div
-                key={`${product.id}-${index}`}
-                className="p-3 flex-shrink-0"
-                style={{ width: `${100 / extendedProducts.length}%` }}
+                key={i}
+                className="p-3 flex-shrink-0 cursor-pointer"
+                style={{ width: `${100 / extended.length}%` }}
+                onClick={() => setSelectedProduct(p)} // ★ OPEN MODAL
               >
-                <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-5 group transition-shadow duration-300 hover:shadow-xl">
-                  {/* Image */}
+                <div className="bg-white rounded-xl shadow-lg border p-5 group">
                   <img
-                    src={product.image}
-                    alt={product.name}
-                    className="h-32 mx-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                    style={{ mixBlendMode: "multiply" }}
-                    onError={(e) => {
-                        e.target.onerror = null; 
-                        e.target.src="https://placehold.co/128x128/f3f4f6/9ca3af?text=Product"; 
-                    }}
+                    src={p.image}
+                    alt={p.name}
+                    className="h-32 mx-auto object-contain group-hover:scale-105 transition-transform"
                   />
-                  
-                  {/* Name (Refined) */}
-                  <h3 className="mt-4 text-sm font-semibold text-gray-900 tracking-wide line-clamp-1 group-hover:text-blue-700 transition-colors duration-300">
-                    {product.name}
+
+                  <h3 className="mt-4 text-sm font-semibold text-gray-900 line-clamp-1">
+                    {p.name}
                   </h3>
-                  
-                  {/* Type (Chic Uppercase) */}
-                  <p className="text-xs text-gray-500 uppercase tracking-widest mt-0.5">
-                    {product.type}
+
+                  <p className="text-xs text-gray-500 uppercase tracking-widest">
+                    {p.type}
                   </p>
-                  
-                  {/* Price (Chic, Separated) */}
+
                   <div className="flex items-end justify-center mt-2">
-                    <span className="text-base font-semibold text-gray-600 mr-0.5">DT</span>
+                    <span className="text-base font-semibold text-gray-600 mr-0.5">
+                      DT
+                    </span>
                     <span className="text-lg font-bold text-gray-900">
-                      {product.price.toFixed(2)}
+                      {p.price.toFixed(2)}
                     </span>
                   </div>
-
                 </div>
               </div>
             ))}
@@ -243,20 +176,27 @@ export default function PopularProductsCarousel() {
           {/* Arrows */}
           <button
             onClick={handlePrev}
-            className="absolute top-1/2 left-0 md:left-2 -translate-y-1/2 text-gray-800 p-2 rounded-full bg-white/70 backdrop-blur-sm hover:bg-gray-200 transition shadow-lg border border-gray-200"
-            aria-label="Previous Product"
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow border"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft />
           </button>
+
           <button
             onClick={handleNext}
-            className="absolute top-1/2 right-0 md:right-2 -translate-y-1/2 text-gray-800 p-2 rounded-full bg-white/70 backdrop-blur-sm hover:bg-gray-200 transition shadow-lg border border-gray-200"
-            aria-label="Next Product"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow border"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight />
           </button>
         </div>
       </div>
+
+      {/* ★ PRODUCT MODAL */}
+      {selectedProduct && (
+        <ProductModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
     </section>
   );
 }

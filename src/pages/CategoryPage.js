@@ -11,67 +11,120 @@ const CategoryPage = () => {
     const data = JSON.parse(localStorage.getItem("all_products_backup") || "[]");
     return data.map(p => ({
       ...p,
-      categorySlug: p.type ? p.type.toLowerCase().replace(" ", "-") : "unknown",
-      connector: p.connector || "Universal", // ensure connector exists
+      categorySlug: p.type ? p.type.toLowerCase().replace(/\s+/g, "-") : "unknown",
+      connector: p.connector || "Universal",
+      model: p.model || null, // for data cables sub-models
       compatibleDevices: Array.isArray(p.compatibleDevices) ? p.compatibleDevices : ["Universal"],
       image: p.image || p.images?.[0] || "https://placehold.co/300x400/f3f4f6/9ca3af?text=Product",
     }));
   }, []);
 
-  // Filter products by category
+  // Filters per category
+  const categoryFilters = {
+    "earphones": ["Jack", "Type-C", "Lightning"],
+    "data-cables": [
+      "USB to Micro", "USB to Type-C", "USB to Lightning",
+      "Jack to Jack", "Jack to Type-C", "Jack to Lightning"
+    ],
+  };
+
+  // Sub-models per filter (for data cables)
+  const filterModels = {
+    "USB to Micro": ["BC01", "BC02", "BC03", "BC04", "BC05"],
+    "USB to Type-C": ["BC01", "BC02", "BC03", "BC04CC", "BC05CC"],
+    "USB to Lightning": ["BC01", "BC02", "BC03", "BC04LC", "BC05LC"],
+    "Jack to Jack": ["BA01"],
+    "Jack to Type-C": ["BA01C"],
+    "Jack to Lightning": ["BA01L"]
+  };
+
+  // Products in this category
   const categoryProducts = allProducts.filter(p => p.categorySlug === slug);
 
-  // Earphones-specific connectors
-  const connectors = useMemo(() => {
-    if (slug === "earphones") {
-      const unique = Array.from(new Set(categoryProducts.map(p => p.connector)));
-      return unique;
-    }
-    return [];
-  }, [categoryProducts, slug]);
+  // Available filters for this category
+  const availableFilters = categoryFilters[slug] || [];
 
-  // Multi-select state
-  const [selectedConnectors, setSelectedConnectors] = useState([]);
+  // Multi-select state for filters
+  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [selectedModels, setSelectedModels] = useState([]);
 
-  // Toggle connector in selectedConnectors
-  const toggleConnector = (conn) => {
-    setSelectedConnectors(prev =>
-      prev.includes(conn)
-        ? prev.filter(c => c !== conn)
-        : [...prev, conn]
+  // Toggle filter selection
+  const toggleFilter = (f) => {
+    setSelectedFilters(prev =>
+      prev.includes(f) ? prev.filter(x => x !== f) : [...prev, f]
+    );
+    // Clear selected models when filter changes
+    setSelectedModels([]);
+  };
+
+  // Toggle model selection (for data cables)
+  const toggleModel = (m) => {
+    setSelectedModels(prev =>
+      prev.includes(m) ? prev.filter(x => x !== m) : [...prev, m]
     );
   };
 
-  // Filter products by selected connectors
-  const filteredProducts = categoryProducts.filter(
-    p => selectedConnectors.length === 0 || selectedConnectors.includes(p.connector)
-  );
+  // Filter products based on selected filters and models
+  const filteredProducts = categoryProducts.filter(p => {
+    if (selectedFilters.length === 0) return true;
+
+    if (!selectedFilters.includes(p.connector)) return false;
+
+    if (slug === "data-cables" && selectedModels.length > 0) {
+      return selectedModels.includes(p.model);
+    }
+
+    return true;
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-16 min-h-[70vh] flex flex-col lg:flex-row gap-8">
 
-      {/* Sidebar Filters (only for Earphones) */}
-      {slug === "earphones" && connectors.length > 0 && (
+      {/* Sidebar Filters */}
+      {availableFilters.length > 0 && (
         <aside className="w-full lg:w-64 border rounded-lg p-4 bg-gray-50">
-          <h2 className="text-lg font-bold mb-4">Filter by Connector</h2>
+          <h2 className="text-lg font-bold mb-4">Filters</h2>
+
+          {/* Connector / Type filters */}
           <ul className="flex flex-col gap-2">
-            {connectors.map(conn => (
-              <li key={conn}>
+            {availableFilters.map(f => (
+              <li key={f}>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={selectedConnectors.includes(conn)}
-                    onChange={() => toggleConnector(conn)}
+                    checked={selectedFilters.includes(f)}
+                    onChange={() => toggleFilter(f)}
                     className="w-4 h-4"
                   />
-                  <span>{conn}</span>
+                  <span>{f}</span>
                 </label>
+
+                {/* Sub-models (only for data-cables) */}
+                {slug === "data-cables" && selectedFilters.includes(f) && filterModels[f] && (
+                  <ul className="ml-6 mt-2 flex flex-col gap-1">
+                    {filterModels[f].map(model => (
+                      <li key={model}>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedModels.includes(model)}
+                            onChange={() => toggleModel(model)}
+                            className="w-3 h-3"
+                          />
+                          <span className="text-sm">{model}</span>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
               </li>
             ))}
           </ul>
-          {selectedConnectors.length > 0 && (
+
+          {(selectedFilters.length > 0 || selectedModels.length > 0) && (
             <button
-              onClick={() => setSelectedConnectors([])}
+              onClick={() => { setSelectedFilters([]); setSelectedModels([]); }}
               className="mt-4 px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
             >
               Clear Filters
@@ -97,6 +150,8 @@ const CategoryPage = () => {
                 price={product.price}
                 type={product.type}
                 compatibleDevices={product.compatibleDevices}
+                connector={product.connector}
+                model={product.model}
                 isHot={product.isHot}
                 onClick={() => navigate(`/product/${product.id}`)}
               />
