@@ -52,7 +52,7 @@ Complete content management system with localStorage persistence:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/rayenamri090-code/public_2>
    cd public_2
    ```
 
