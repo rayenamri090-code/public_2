@@ -22,6 +22,7 @@ import NotFound from "./pages/NotFound";
 import CategoryPage from "./pages/CategoryPage";
 import Privacy from "./pages/Privacy";
 import FAQ from "./pages/FAQ"; // <-- import FAQ
+import Shipping from "./pages/Shipping"; // <-- import Shipping
 
 const AppContent = () => {
   const location = useLocation();
@@ -56,7 +57,7 @@ const AppContent = () => {
           {/* Privacy & FAQ */}
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/faq" element={<FAQ />} />
-
+          <Route path="/shipping" element={<Shipping />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
