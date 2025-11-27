@@ -4,7 +4,9 @@ import FormCard from './FormCardSlider';
 import SlidePreview from './SlidePreview';
 import PreviewModal from './PreviewModalSlider';
 
-const AddSlider = () => {
+import { saveSlider } from '../../utils/sliderStorage';
+
+const AddSlider = ({ onCancel, onSave }) => {
   const [data, setData] = useState({
     image: '',
     title: '',
@@ -21,8 +23,13 @@ const AddSlider = () => {
   };
 
   const handleSubmit = () => {
-    console.log('Slider Added', data);
+    if (!data.image || !data.title) {
+      alert('Please fill in at least the Image URL and Title.');
+      return;
+    }
+    saveSlider(data);
     alert('Slider Added Successfully!');
+    if (onSave) onSave();
     setData({
       image: '',
       title: '',
@@ -35,10 +42,11 @@ const AddSlider = () => {
   return (
     <>
       <FormCard
-        title="Manage Sliders"
+        title="Add New Slider"
         icon={Image}
         onSubmit={handleSubmit}
         onPreview={() => setShowPreview(true)}
+        onCancel={onCancel}
       >
         <input
           name="image"

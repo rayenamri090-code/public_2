@@ -3,8 +3,9 @@ import { Package } from 'lucide-react';
 import FormCard from './FormCardProduct';
 import ProductCard from "../ProductCard";
 import PreviewModal from "./PreviewModal";
+import { saveProduct } from '../../utils/productStorage';
 
-const AddProduct = () => {
+const AddProduct = ({ onCancel, onSave }) => {
   const [data, setData] = useState({
     name: '',
     price: '',
@@ -23,14 +24,19 @@ const AddProduct = () => {
   };
 
   const handleSubmit = () => {
+    if (!data.name || !data.price) {
+      alert('Please fill in at least the Product Name and Price.');
+      return;
+    }
     const product = {
       ...data,
       price: parseFloat(data.price),
-      rating: parseInt(data.rating),
-      compatibleDevices: data.compatibleDevices.split(',').map(d => d.trim())
+      rating: parseInt(data.rating) || 0,
+      compatibleDevices: data.compatibleDevices ? data.compatibleDevices.split(',').map(d => d.trim()) : []
     };
-    console.log('Product Added', product);
-    alert('Product Added');
+    saveProduct(product);
+    alert('Product Added Successfully!');
+    if (onSave) onSave();
     setData({
       name: '',
       price: '',
@@ -49,6 +55,7 @@ const AddProduct = () => {
         icon={Package}
         onSubmit={handleSubmit}
         onPreview={() => setShowPreview(true)}
+        onCancel={onCancel}
       >
         <input name="name" placeholder="Product Name" value={data.name} onChange={handleChange} className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700" />
 

@@ -1,12 +1,12 @@
 // components/AddCategory.js
 import React, { useState } from "react";
 import { List } from "lucide-react";
-import FormCard from "./FormCardProduct";     // ← same as Product
-
+import FormCard from "./FormCardProduct";
 import CategoryPreviewCard from "./CategoryPreviewCard";
 import CategoryModal from "./CategoryModal ";
+import { saveCategory } from '../../utils/categoryStorage';
 
-const AddCategory = () => {
+const AddCategory = ({ onCancel, onSave }) => {
   const [data, setData] = useState({
     name: "",
     count: "",
@@ -21,13 +21,18 @@ const AddCategory = () => {
   };
 
   const handleSubmit = () => {
+    if (!data.name || !data.image) {
+      alert('Please fill in at least the Category Name and Image.');
+      return;
+    }
     const category = {
       ...data,
-      count: parseInt(data.count),
+      count: parseInt(data.count) || 0,
     };
 
-    console.log("Category Added", category);
-    alert("Category Added");
+    saveCategory(category);
+    alert("Category Added Successfully!");
+    if (onSave) onSave();
 
     setData({ name: "", count: "", image: "" });
   };
@@ -39,6 +44,7 @@ const AddCategory = () => {
         icon={List}
         onSubmit={handleSubmit}
         onPreview={() => setShowPreview(true)}
+        onCancel={onCancel}
       >
         <input
           name="name"
@@ -67,7 +73,7 @@ const AddCategory = () => {
       </FormCard>
 
       {/* ---- PREVIEW ---- */}
-      <CategoryModal  open={showPreview} onClose={() => setShowPreview(false)}>
+      <CategoryModal open={showPreview} onClose={() => setShowPreview(false)}>
         <CategoryPreviewCard
           name={data.name}
           count={data.count ? parseInt(data.count) : 0}

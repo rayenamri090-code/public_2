@@ -1,16 +1,14 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getCategories } from "../utils/categoryStorage";
 
 const CircleCategories = () => {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
 
-  const categories = [
-    { name: "Data Cables", count: 51, image: "https://static.thenounproject.com/png/884572-200.png", slug: "data-cables" },
-    { name: "Adapters", count: 15, image: "https://thumbs.dreamstime.com/b/minimalist-usb-c-to-adapter-icon-black-white-background-414055477.jpg", slug: "adapters" },
-    { name: "Chargers", count: 18, image: "https://t.pimg.jp/092/860/826/1/92860826.jpg", slug: "chargers" },
-    { name: "Earphones", count: 12, image: "https://t4.ftcdn.net/jpg/10/56/66/65/360_F_1056666546_5yA2wRTx33DUB1RaKP0Xd1nGecPlvaHb.jpg", slug: "earphones" },
-    { name: "Car Charger", count: 38, image: "https://www.shutterstock.com/image-vector/usb-car-charger-line-icon-260nw-2145857033.jpg", slug: "car-charger" },
-    { name: "Glass Protection", count: 18, image: "https://png.pngtree.com/png-clipart/20230131/ourmid/pngtree-anti-crack-tempered-glass-logo-png-image_6577027.png", slug: "glass-protection" }
-  ];
+  useEffect(() => {
+    setCategories(getCategories());
+  }, []);
 
   return (
     <section className="py-12 bg-gray-950 lg:bg-white transition-colors duration-500">
