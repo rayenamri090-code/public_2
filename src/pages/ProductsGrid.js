@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../myComponents/ProductCard";
+import { getProducts } from "../utils/productStorage";
 
 const ProductsGrid = () => {
   const [searchParams] = useSearchParams();
@@ -13,40 +14,14 @@ const ProductsGrid = () => {
   const [activeFilter, setActiveFilter] = useState(filterSlugs[0]);
   const [earphoneSubFilter, setEarphoneSubFilter] = useState(showSubFilters ? "all" : null);
 
-  // Generate products
+  // Get real products from storage
   const products = useMemo(() => {
-    let all = [];
-
-    // Adapters & Chargers
-    ["Adapters", "Chargers"].forEach((type) => {
-      for (let i = 1; i <= 10; i++) {
-        all.push({
-          id: `${type}-${i}`,
-          name: `${type} Product #${i}`,
-          price: 10 + (i % 5) * 5,
-          type: type,
-          image: "https://placehold.co/300x400/f3f4f6/9ca3af?text=Product",
-          categorySlug: type.toLowerCase(),
-        });
-      }
-    });
-
-    // Earphones with types
-    const earTypes = ["Type-C", "Jack", "Lightning"];
-    for (let i = 1; i <= 10; i++) {
-      const t = earTypes[i % 3];
-      all.push({
-        id: `earphones-${i}`,
-        name: `Earphones Product #${i}`,
-        price: 15 + (i % 5) * 5,
-        type: t,
-        image: "https://placehold.co/300x400/f3f4f6/9ca3af?text=Earphones",
-        categorySlug: "earphones",
-        connectionType: t,
-      });
-    }
-
-    return all;
+    const allProducts = getProducts();
+    // Map products to include categorySlug for filtering
+    return allProducts.map(p => ({
+      ...p,
+      categorySlug: p.type ? p.type.toLowerCase().replace(/\s+/g, "-") : "unknown",
+    }));
   }, []);
 
   // Filter products
@@ -56,7 +31,7 @@ const ProductsGrid = () => {
         return products.filter(
           (p) =>
             p.categorySlug === "earphones" &&
-            p.connectionType.toLowerCase() === earphoneSubFilter.toLowerCase()
+            p.type?.toLowerCase() === earphoneSubFilter.toLowerCase()
         );
       }
       return products.filter((p) => p.categorySlug === "earphones");
@@ -118,7 +93,9 @@ const ProductsGrid = () => {
               image={product.image}
               name={product.name}
               price={product.price}
-              type={product.connectionType || product.type}
+              type={product.type}
+              compatibleDevices={product.compatibleDevices}
+              isHot={product.isHot}
             />
           ))}
         </div>
