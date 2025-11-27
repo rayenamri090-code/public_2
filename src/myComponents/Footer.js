@@ -1,25 +1,30 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import logo from "../logo/logoWhite.png";
+import { useNavigate } from "react-router-dom";
+import logo from "../logo/logoWhite.png"; // make sure the path is correct
 
 const Footer = () => {
+  const navigate = useNavigate(); // use React Router navigate
+
   return (
     <footer className="bg-black text-gray-400 text-sm py-4 px-4">
       <div className="max-w-screen-xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
 
-        {/* Logo => goes to Menu Page */}
-        <Link to="/menu" className="flex items-center gap-2 hover:opacity-80">
-          <img src={logo} className="w-6 h-6" alt="logo" />
-          <span className="text-white font-medium text-sm">BlackWave</span>
-        </Link>
+        {/* Clickable Logo */}
+        <div
+          className="flex items-center space-x-2 cursor-pointer hover:opacity-80"
+          onClick={() => navigate("/")} // navigate to home
+        >
+          <img src={logo} alt="BlackWave Logo" className="w-8 h-8 object-contain" />
+          <span className="text-xl font-bold text-white">BlackWave</span>
+        </div>
 
         {/* Links */}
-        <nav className="flex gap-4 text-xs">
-          <Link to="/about" className="hover:text-white">About</Link>
-          <Link to="/privacy" className="hover:text-white">Privacy</Link>
-          <Link to="/shipping" className="hover:text-white">Shipping</Link>
-          <Link to="/faq" className="hover:text-white">FAQ</Link>
-        </nav>
+        <div className="flex gap-4 text-xs">
+          <button className="hover:text-white" onClick={() => navigate("/about")}>About</button>
+          <button className="hover:text-white" onClick={() => navigate("/privacy")}>Privacy</button>
+          <button className="hover:text-white" onClick={() => navigate("/shipping")}>Shipping</button>
+          <button className="hover:text-white" onClick={() => navigate("/faq")}>FAQ</button>
+        </div>
 
         {/* Copyright */}
         <p className="text-xs text-gray-500">© 2025 BlackWave</p>
